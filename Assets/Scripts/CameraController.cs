@@ -6,28 +6,73 @@ public class CameraController : MonoBehaviour
 {
     public float speed = 40f;
     public float borderThickness = 25f;
+    private Vector3 pos;
 
     void Update()
     {
-        Vector3 pos = transform.position;
+        pos = transform.position;
+        handleKeyMovement();
+        handleMouseMovement();
+        transform.position = pos;
+    }
 
+    private void handleKeyMovement()
+    {
         if (Input.mousePosition.y >= Screen.height - borderThickness)
         {
-            pos.y += speed * Time.deltaTime;
+            moveUp();
         }
-        if (Input.mousePosition.y <= borderThickness)
+        else if (Input.mousePosition.y <= borderThickness)
         {
-            pos.y -= speed * Time.deltaTime;
+            moveDown();
         }
-        if (Input.mousePosition.x >= Screen.width - borderThickness)
+        else if (Input.mousePosition.x >= Screen.width - borderThickness)
         {
-            pos.x += speed * Time.deltaTime;
+            moveRight();
         }
-        if (Input.mousePosition.x <= borderThickness)
+        else if (Input.mousePosition.x <= borderThickness)
         {
-            pos.x -= speed * Time.deltaTime;
+            moveLeft();
         }
+    }
 
-        transform.position = pos;
+    private void handleMouseMovement()
+    {
+        if (Input.GetKey(KeyCode.UpArrow)) 
+        {
+            moveUp();
+        } 
+        else if (Input.GetKey(KeyCode.DownArrow))
+        {
+            moveDown();
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            moveRight();
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            moveLeft();
+        }
+    }
+
+    private void moveUp()
+    {
+        pos.y += speed * Time.deltaTime;
+    }
+
+    private void moveDown()
+    {
+        pos.y -= speed * Time.deltaTime;
+    }
+
+    private void moveRight()
+    {
+        pos.x += speed * Time.deltaTime;
+    }
+
+    private void moveLeft()
+    {
+        pos.x -= speed * Time.deltaTime;
     }
 }
