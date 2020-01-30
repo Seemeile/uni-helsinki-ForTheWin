@@ -36,14 +36,14 @@ public class GameHandler : MonoBehaviour
 
     private void SpawnDemon()
     {
-        SpawnDemon(new float3(UnityEngine.Random.Range(-5f, 5f), UnityEngine.Random.Range(-5f, 5f), 0f));
+        SpawnDemon(new float3(UnityEngine.Random.Range(-5f, 5f), UnityEngine.Random.Range(-5f, 5f), -1f));
     }
     private void SpawnDemon(float3 spawnPosition)
     {
         EntityArchetype entityArchetype = entityManager.CreateArchetype(
             typeof(Demon),
             typeof(Translation),
-            typeof(MoveTo),
+            typeof(MoveToComponent),
             typeof(RenderMesh),
             typeof(LocalToWorld)
              );
@@ -51,28 +51,11 @@ public class GameHandler : MonoBehaviour
         Entity entity = entityManager.CreateEntity(entityArchetype);
 
         entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-        entityManager.SetComponentData(entity, new MoveTo { move = true, position = spawnPosition, moveSpeed = 40f });
+        entityManager.SetComponentData(entity, new MoveToComponent { move = true, position = spawnPosition, moveSpeed = 40f });
         entityManager.SetSharedComponentData(entity, new RenderMesh
         {
             mesh = demonMesh,
             material = demonMaterial,
         });
-    }
-
-
-
-
-
-
-
-
-    public struct Demon : IComponentData { }
-
-    public struct MoveTo : IComponentData
-    {
-        public bool move;
-        public float3 position;
-        public float3 lastMoveDir;
-        public float moveSpeed;
     }
 }
