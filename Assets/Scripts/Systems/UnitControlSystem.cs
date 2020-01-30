@@ -34,8 +34,15 @@ public class UnitControlSystem : ComponentSystem
             GameHandler.instance.selectionAreaTransform.localScale = selectionAreaSize;
         }
         if (Input.GetMouseButtonUp(0))
-        { 
+        {
             //Mouse Released
+
+            // Deselect all previous selected entities
+            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity) =>
+            {
+                PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);
+                GameHandler.instance.UI.gameObject.SetActive(false);
+            });
             GameHandler.instance.selectionAreaTransform.gameObject.SetActive(false);
             endPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -46,27 +53,26 @@ public class UnitControlSystem : ComponentSystem
             float selectionAreaMinSize = 10f;
             float smallSelectionAreaSize = math.distance(lowerLeftPosition, upperRightPosition);
 
-            if (smallSelectionAreaSize<selectionAreaMinSize)
+            if (smallSelectionAreaSize < selectionAreaMinSize)
             {
                 //Selection too small, meaning if there is only one click
-                lowerLeftPosition += new float3(-1, -1, 0) * (selectionAreaMinSize - selectionAreaSize) * .5f;
-                upperRightPosition += new float3(+1, +1, 0) * (selectionAreaMinSize - selectionAreaSize) * .5f;
+                lowerLeftPosition += new float3(-1f, -1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * .5f;
+                upperRightPosition += new float3(+1f, +1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * .5f;
             }
 
-            // Deselect all previous selected entities
-            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity) =>
-            {
-                PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);
-                GameHandler.instance.UI.gameObject.SetActive(false);
-            });
+            
+            float n = 0;
             //Selection
             Entities.ForEach((Entity entity, ref Translation translation) => {
                 float3 entityPosition = translation.Value;
+                
                 if (entityPosition.x >= lowerLeftPosition.x && 
                     entityPosition.y >= lowerLeftPosition.y &&
                     entityPosition.x <= upperRightPosition.x &&
                     entityPosition.y <= upperRightPosition.y)
                 {
+                    n += 1;
+                    Debug.Log(n);
                     //Entity inside the selection area
                     PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
                 }

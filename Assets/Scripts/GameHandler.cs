@@ -36,7 +36,7 @@ public class GameHandler : MonoBehaviour
 
     private void SpawnDemon()
     {
-        SpawnDemon(new float3(UnityEngine.Random.Range(-5f, 5f), UnityEngine.Random.Range(-5f, 5f), -1f));
+        SpawnDemon(new float3(UnityEngine.Random.Range(-5f, 5f), UnityEngine.Random.Range(-5f, 5f), -10f));
     }
     private void SpawnDemon(float3 spawnPosition)
     {
