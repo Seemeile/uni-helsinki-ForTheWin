@@ -16,6 +16,7 @@ public class GameHandler : MonoBehaviour
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
+    public GameObject UI;
 
     private EntityManager entityManager;
 
@@ -25,13 +26,12 @@ public class GameHandler : MonoBehaviour
     }
     private void Start()
     {
-      entityManager = World.Active.EntityManager;
+        entityManager = World.Active.EntityManager;
 
         for (int i=0; i < 2; i++)
         {
             SpawnDemon();
         }
-        
     }
 
     private void SpawnDemon()
@@ -46,7 +46,7 @@ public class GameHandler : MonoBehaviour
             typeof(MoveToComponent),
             typeof(RenderMesh),
             typeof(LocalToWorld)
-             );
+        );
 
         Entity entity = entityManager.CreateEntity(entityArchetype);
 

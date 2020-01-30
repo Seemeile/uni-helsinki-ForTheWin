@@ -7,7 +7,7 @@ using Unity.Transforms;
 using Unity.Rendering;
 using Unity.Mathematics;
 
-public class TilemapObjectsToEntities : MonoBehaviour
+public class TileStructuresToEntities : MonoBehaviour
 {
     [SerializeField] private Material material;
     [SerializeField] private Mesh mesh;
@@ -16,7 +16,8 @@ public class TilemapObjectsToEntities : MonoBehaviour
     void Start()
     {
         EntityManager entityManager = World.Active.EntityManager;   
-        EntityArchetype simpleEntityArchetype = entityManager.CreateArchetype(
+        EntityArchetype structureArchetype = entityManager.CreateArchetype(
+            typeof(StructureComponent),
             typeof(Translation),
             typeof(RenderMesh),
             typeof(LocalToWorld)
@@ -30,7 +31,7 @@ public class TilemapObjectsToEntities : MonoBehaviour
             if (tilemap.HasTile(localPlace))
             {
                 TileBase tile = tilemap.GetTile(localPlace);
-                Entity entity = entityManager.CreateEntity(simpleEntityArchetype);
+                Entity entity = entityManager.CreateEntity(structureArchetype);
                 entityManager.SetSharedComponentData(entity, new RenderMesh {
                     material = material,
                     mesh = mesh

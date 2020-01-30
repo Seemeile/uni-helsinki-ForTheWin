@@ -283,7 +283,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 66299728}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 034736f1cb2cd4e55adad104aac2b7cb, type: 3}
+  m_Script: {fileID: 11500000, guid: f8451c30a11d14243987983f2d8b936f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 8ee4dc23c38fa46d482e2d1d611fdabe, type: 2}
@@ -7629,6 +7629,7 @@ MonoBehaviour:
     type: 2}
   unitSelectedCircleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000,
     type: 0}
+  UI: {fileID: 1402928496}
 --- !u!4 &1836584337
 Transform:
   m_ObjectHideFlags: 0

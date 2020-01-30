@@ -57,6 +57,7 @@ public class UnitControlSystem : ComponentSystem
             Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity) =>
             {
                 PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);
+                GameHandler.instance.UI.gameObject.SetActive(false);
             });
             //Selection
             Entities.ForEach((Entity entity, ref Translation translation) => {
