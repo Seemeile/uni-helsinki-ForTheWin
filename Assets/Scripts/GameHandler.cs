@@ -14,6 +14,8 @@ public class GameHandler : MonoBehaviour
     public Mesh demonMesh;
     public Material demonMaterial;
     public Transform selectionAreaTransform;
+    public Material unitSelectedCircleMaterial;
+    public Mesh unitSelectedCircleMesh;
 
     private EntityManager entityManager;
 

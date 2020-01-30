@@ -3,7 +3,10 @@ guid: f49b67aea396e7b42a1c759670a58e8e
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - demonMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  - demonMaterial: {fileID: 2100000, guid: 9d8dbc08eb693c749bbb6a46aac02c95, type: 2}
+  - selectionAreaTransform: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
