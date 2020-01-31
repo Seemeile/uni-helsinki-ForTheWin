@@ -78,5 +78,16 @@ public class UnitControlSystem : ComponentSystem
                 }
             });
         }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            //Right mouse button down
+            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) =>
+            {
+                moveTo.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                moveTo.move = true;
+            });
+
+        }
     }
 }

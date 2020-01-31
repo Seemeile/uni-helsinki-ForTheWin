@@ -1,5 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
+using Unity.Jobs;
 
 public struct MoveToComponent : IComponentData
 {
@@ -8,3 +10,4 @@ public struct MoveToComponent : IComponentData
     public float3 lastMoveDir;
     public float moveSpeed;
 }
+
