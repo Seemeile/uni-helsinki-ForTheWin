@@ -18,8 +18,6 @@ public class GameHandler : MonoBehaviour
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
-    public GameObject UI;
-
     private EntityManager entityManager;
 
     private void Awake()

@@ -38,12 +38,14 @@ public class UnitControlSystem : ComponentSystem
         if (Input.GetMouseButtonUp(0))
         {
             //Mouse Released
-
             // Deselect all previous selected entities
             Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity) =>
             {
-                PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);
-                GameHandler.instance.UI.gameObject.SetActive(false);
+                PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);   
+            });
+            Entities.WithAll<StructureSelectedComponent>().ForEach((Entity entity) => {
+                PostUpdateCommands.RemoveComponent<StructureSelectedComponent>(entity);
+                UI.instance.hideStructureOverlay();
             });
             GameHandler.instance.selectionAreaTransform.gameObject.SetActive(false);
             currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);

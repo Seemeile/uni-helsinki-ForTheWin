@@ -6,9 +6,13 @@ public class StructureSelectedSystem : ComponentSystem
 {
     protected override void OnUpdate()
     {
-        Entities.WithAll<UnitSelectedComponent>().ForEach((ref StructureComponent structure) =>
+        Entities.WithAll<UnitSelectedComponent>()
+            .WithNone<StructureSelectedComponent>()
+            .ForEach((Entity entity, ref StructureComponent structure) =>
         {
-            GameHandler.instance.UI.gameObject.SetActive(true);
+            PostUpdateCommands.AddComponent(entity, new StructureSelectedComponent());
+            UI.instance.showStructureOverlay(structure.tileNo);
+            return;
         });
     }
 }

@@ -72,8 +72,14 @@ public class TileStructuresToEntities : MonoBehaviour
                     material = tileMat,
                     mesh = tileMesh
                 });
+
                 entityManager.SetComponentData(entity, new Translation {
                     Value = new float3(place.x + 0.5f, place.y + 0.5f, -1)
+                });
+
+                int structureNumber = int.Parse(tile.name.Substring(tile.name.LastIndexOf('_') + 1));
+                entityManager.SetComponentData(entity, new StructureComponent {
+                    tileNo = structureNumber
                 });
             }
         }
