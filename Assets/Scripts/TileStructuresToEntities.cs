@@ -7,7 +7,7 @@ using Unity.Transforms;
 using Unity.Rendering;
 using Unity.Mathematics;
 
-public class TileStructuresToEntities : MonoBehaviour
+/*public class TileStructuresToEntities : MonoBehaviour
 {
     [SerializeField] private Material material;
     [SerializeField] private Mesh mesh;
@@ -43,4 +43,4 @@ public class TileStructuresToEntities : MonoBehaviour
         }
         tilemap.ClearAllTiles();
     }
-}
+}*/

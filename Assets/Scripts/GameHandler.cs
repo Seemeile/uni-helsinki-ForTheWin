@@ -5,6 +5,8 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Rendering;
+using Unity.Jobs;
+using Unity.Burst;
 
 
 public class GameHandler : MonoBehaviour
@@ -58,4 +60,7 @@ public class GameHandler : MonoBehaviour
             material = demonMaterial,
         });
     }
+
 }
+
+

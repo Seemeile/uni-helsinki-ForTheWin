@@ -1,17 +1,18 @@
-﻿using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Jobs;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Unity.Entities;
+using Unity.Transforms;
+using Unity.Mathematics;
+using Unity.Rendering;
+using Unity.Jobs;
+using Unity.Burst;
 
 
 //Unit go to Move Position
-public class UnitMoveSystem : MonoBehaviour
-{ 
-
+/*public class UnitMoveSystem : JobComponentSystem
+{
+  
     private struct Job : IJobForEachWithEntity<MoveToComponent, Translation>
     {
         public float deltaTime;
@@ -37,5 +38,5 @@ public class UnitMoveSystem : MonoBehaviour
             }
         }
     }
-}
+    */
 

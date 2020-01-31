@@ -11,6 +11,8 @@ public class UnitControlSystem : ComponentSystem
     private float3 endPosition;
     private float3 selectionAreaSize;
     private float3 currentMousePosition;
+    private float3 lowerLeftPosition;
+    private float3 upperRightPosition;
 
 
     protected override void OnUpdate()
@@ -44,13 +46,20 @@ public class UnitControlSystem : ComponentSystem
                 GameHandler.instance.UI.gameObject.SetActive(false);
             });
             GameHandler.instance.selectionAreaTransform.gameObject.SetActive(false);
-            endPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            endPosition.x = currentMousePosition.x;
+            endPosition.y = currentMousePosition.y;
 
             // Entities detection
+            Debug.Log("startPosition" + startPosition);
+            Debug.Log("endPosition" + endPosition);
+            Debug.Log("math.min(startPosition.x, endPosition.x) "+ math.min(startPosition.x, endPosition.x));
+
+
             float3 lowerLeftPosition = new float3(math.min(startPosition.x, endPosition.x), math.min(startPosition.y, endPosition.y), 0);
             float3 upperRightPosition = new float3(math.max(startPosition.x, endPosition.x), math.max(startPosition.y, endPosition.y), 0);
 
-            float selectionAreaMinSize = 10f;
+            float selectionAreaMinSize = 1f;
             float smallSelectionAreaSize = math.distance(lowerLeftPosition, upperRightPosition);
 
             if (smallSelectionAreaSize < selectionAreaMinSize)
@@ -59,22 +68,21 @@ public class UnitControlSystem : ComponentSystem
                 lowerLeftPosition += new float3(-1f, -1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * .5f;
                 upperRightPosition += new float3(+1f, +1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * .5f;
             }
-
-            
-            float n = 0;
+            Debug.Log("lowerLeftPosition "+lowerLeftPosition);
+            Debug.Log("upperRightPosition "+upperRightPosition); 
             //Selection
             Entities.ForEach((Entity entity, ref Translation translation) => {
                 float3 entityPosition = translation.Value;
-                
+                Debug.Log("entityPosition "+entityPosition);
+
                 if (entityPosition.x >= lowerLeftPosition.x && 
                     entityPosition.y >= lowerLeftPosition.y &&
                     entityPosition.x <= upperRightPosition.x &&
                     entityPosition.y <= upperRightPosition.y)
                 {
-                    n += 1;
-                    Debug.Log(n);
                     //Entity inside the selection area
                     PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
+                    Debug.Log("entityPosition Accepted " + entityPosition);
                 }
             });
         }
