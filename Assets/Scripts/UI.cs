@@ -27,11 +27,28 @@ public class UI : MonoBehaviour
 
     public void showStructureOverlay(int structureNumber) 
     {
-        structureOverlay.SetActive(true);
+        // set icon to building sprite
         GameObject icon = structureOverlay.transform.Find("SelectionIcon").gameObject;
         SpriteRenderer iconRenderer = icon.GetComponent<SpriteRenderer>();
         Sprite structureSprite = Resources.Load<Sprite>("Sprites/TileSprites/tileset16x16_1_" + structureNumber);
         iconRenderer.sprite = structureSprite;
+
+        // show buildable units
+        string[] buildableUnits = BuildingData.getBuildableUnits(structureNumber);
+        for (int i = 0; i < 3; i++) 
+        {
+            // reset
+            GameObject unitSlot = structureOverlay.transform.Find("UnitSlot" + (i + 1)).gameObject;
+            SpriteRenderer unitSlotRenderer = unitSlot.GetComponent<SpriteRenderer>();
+            unitSlotRenderer.sprite = null;
+            // set unit icon
+            if (i < buildableUnits.Length)
+            {
+                Sprite unitSlotSprite = Resources.Load<Sprite>("Sprites/Animation/" + buildableUnits[i]);
+                unitSlotRenderer.sprite = unitSlotSprite;
+            }
+        }
+        structureOverlay.SetActive(true);   
     }
 
     public void hideStructureOverlay() 
