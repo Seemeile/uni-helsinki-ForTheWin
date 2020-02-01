@@ -53,14 +53,9 @@ public class UnitControlSystem : ComponentSystem
             endPosition.y = currentMousePosition.y;
 
             // Entities detection
-            Debug.Log("startPosition" + startPosition);
-            Debug.Log("endPosition" + endPosition);
-            Debug.Log("math.min(startPosition.x, endPosition.x) "+ math.min(startPosition.x, endPosition.x));
-
-
             float3 lowerLeftPosition = new float3(math.min(startPosition.x, endPosition.x), math.min(startPosition.y, endPosition.y), 0);
             float3 upperRightPosition = new float3(math.max(startPosition.x, endPosition.x), math.max(startPosition.y, endPosition.y), 0);
-
+            bool selectOnlyOneEntity = false;
             float selectionAreaMinSize = 1f;
             float smallSelectionAreaSize = math.distance(lowerLeftPosition, upperRightPosition);
 
@@ -69,22 +64,24 @@ public class UnitControlSystem : ComponentSystem
                 //Selection too small, meaning if there is only one click
                 lowerLeftPosition += new float3(-1f, -1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * .5f;
                 upperRightPosition += new float3(+1f, +1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * .5f;
+                selectOnlyOneEntity = true;
             }
-            Debug.Log("lowerLeftPosition "+lowerLeftPosition);
-            Debug.Log("upperRightPosition "+upperRightPosition); 
             //Selection
+            int selectEntityCount = 0;
             Entities.ForEach((Entity entity, ref Translation translation) => {
-                float3 entityPosition = translation.Value;
-                Debug.Log("entityPosition "+entityPosition);
-
-                if (entityPosition.x >= lowerLeftPosition.x && 
-                    entityPosition.y >= lowerLeftPosition.y &&
-                    entityPosition.x <= upperRightPosition.x &&
-                    entityPosition.y <= upperRightPosition.y)
+                if (selectOnlyOneEntity == false || selectEntityCount < 1)
                 {
-                    //Entity inside the selection area
-                    PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
-                    Debug.Log("entityPosition Accepted " + entityPosition);
+                    float3 entityPosition = translation.Value;
+
+                    if (entityPosition.x >= lowerLeftPosition.x &&
+                        entityPosition.y >= lowerLeftPosition.y &&
+                        entityPosition.x <= upperRightPosition.x &&
+                        entityPosition.y <= upperRightPosition.y)
+                    {
+                        //Entity inside the selection area
+                        PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
+                        selectEntityCount++;
+                    }
                 }
             });
         }

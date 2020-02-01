@@ -10,9 +10,9 @@ using Unity.Burst;
 
 
 //Unit go to Move Position
-/*public class UnitMoveSystem : JobComponentSystem
+public class UnitMoveSystem : JobComponentSystem
 {
-  
+
     private struct Job : IJobForEachWithEntity<MoveToComponent, Translation>
     {
         public float deltaTime;
@@ -25,9 +25,12 @@ using Unity.Burst;
                 if (math.distance(translation.Value, moveTo.position) > reachedPositionDistance)
                 {
                     // Far from the entity position
+                    float z = translation.Value.z;
                     float3 moveDir = math.normalize(moveTo.position - translation.Value);
                     moveTo.lastMoveDir = moveDir;
                     translation.Value += moveDir * moveTo.moveSpeed * deltaTime;
+                    translation.Value.z = z;
+
 
                 }
                 else
@@ -38,5 +41,14 @@ using Unity.Burst;
             }
         }
     }
-    */
+    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    {
+        Job job = new Job
+        {
+            deltaTime = Time.deltaTime
+        };
+        return job.Schedule(this, inputDeps);
+    }
+}
+    
 
