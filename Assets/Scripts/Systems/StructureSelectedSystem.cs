@@ -6,14 +6,15 @@ public class StructureSelectedSystem : ComponentSystem
 {
     protected override void OnUpdate()
     {
-        handleStructureSelect();
         handleStructureUnselect();
+        handleStructureSelect();
     }
 
     private void handleStructureSelect()
     {
-        // get all structures that have received the EntitySelectedComponent tag 
-        Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref StructureComponent structure) =>
+        // get all structures that have received the EntitySelectedComponent tag but are not marked for Unselect
+        Entities.WithAll<EntitySelectedComponent>().WithNone<EntityUnselectedComponent>()
+            .ForEach((Entity entity, ref StructureComponent structure) =>
         {
             Debug.Log("selecting " + entity.Index);
             // add the StructureSelectedComponent to the first found structure
