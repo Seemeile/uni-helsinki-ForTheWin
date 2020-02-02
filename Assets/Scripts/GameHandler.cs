@@ -45,13 +45,15 @@ public class GameHandler : MonoBehaviour
             typeof(Translation),
             typeof(MoveToComponent),
             typeof(RenderMesh),
-            typeof(LocalToWorld)
+            typeof(LocalToWorld),
+            typeof(SpriteSheetAnimation_Data)
         );
 
         Entity entity = entityManager.CreateEntity(entityArchetype);
 
         entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-        entityManager.SetComponentData(entity, new MoveToComponent { move = true, position = spawnPosition, moveSpeed = 40f });
+        entityManager.SetComponentData(entity, new MoveToComponent { move = true, position = spawnPosition, moveSpeed = 20f });
+        entityManager.SetComponentData(entity, new SpriteSheetAnimation_Data { currentFrame = 0, frameCount = 4, frameTimer = 0f, frameTimerMax = 0.1f });
         entityManager.SetSharedComponentData(entity, new RenderMesh
         {
             mesh = demonMesh,

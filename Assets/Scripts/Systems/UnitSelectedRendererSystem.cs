@@ -9,10 +9,10 @@ public class UnitSelectedRenderer : ComponentSystem
     {
         Entities.WithAll<UnitSelectedComponent>().ForEach((ref Translation translation) =>
         {
-            float3 position = translation.Value + new float3(0, -3f, +1);
+            float3 position = translation.Value + new float3(0, -.3f, +10f);
             Graphics.DrawMesh(
                 GameHandler.instance.unitSelectedCircleMesh,
-                translation.Value, Quaternion.identity,
+                position, Quaternion.identity,
                 GameHandler.instance.unitSelectedCircleMaterial,
                 0
                 );
