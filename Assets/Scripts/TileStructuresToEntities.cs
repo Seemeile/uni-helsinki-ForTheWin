@@ -78,8 +78,9 @@ public class TileStructuresToEntities : MonoBehaviour
                 });
 
                 int structureNumber = int.Parse(tile.name.Substring(tile.name.LastIndexOf('_') + 1));
+                BuildingType buildingType = BuildingData.getBuildingType(structureNumber);
                 entityManager.SetComponentData(entity, new StructureComponent {
-                    tileNo = structureNumber
+                    type = buildingType
                 });
             }
         }

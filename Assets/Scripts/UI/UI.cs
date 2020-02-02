@@ -25,16 +25,17 @@ public class UI : MonoBehaviour
         
     }
 
-    public void showStructureOverlay(int structureNumber) 
+    public void showStructureOverlay(BuildingType structureType) 
     {
         // set icon to building sprite
         GameObject icon = structureOverlay.transform.Find("SelectionIcon").gameObject;
         SpriteRenderer iconRenderer = icon.GetComponent<SpriteRenderer>();
-        Sprite structureSprite = Resources.Load<Sprite>("Sprites/TileSprites/tileset16x16_1_" + structureNumber);
+        int tileNo = BuildingData.getTileNumber(structureType);
+        Sprite structureSprite = Resources.Load<Sprite>("Sprites/TileSprites/tileset16x16_1_" + tileNo);
         iconRenderer.sprite = structureSprite;
 
         // show buildable units
-        string[] buildableUnits = BuildingData.getBuildableUnits(structureNumber);
+        UnitType[] buildableUnits = BuildingData.getBuildableUnits(structureType);
         for (int i = 0; i < 3; i++) 
         {
             // reset
@@ -44,7 +45,8 @@ public class UI : MonoBehaviour
             // set unit icon
             if (i < buildableUnits.Length)
             {
-                Sprite unitSlotSprite = Resources.Load<Sprite>("Sprites/Animation/" + buildableUnits[i]);
+                string spriteName = UnitData.getUnitSprite(buildableUnits[i]);
+                Sprite unitSlotSprite = Resources.Load<Sprite>("Sprites/Animation/" + spriteName);
                 unitSlotRenderer.sprite = unitSlotSprite;
             }
         }

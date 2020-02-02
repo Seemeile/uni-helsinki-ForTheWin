@@ -11,7 +11,7 @@ public class StructureSelectedSystem : ComponentSystem
             .ForEach((Entity entity, ref StructureComponent structure) =>
         {
             PostUpdateCommands.AddComponent(entity, new StructureSelectedComponent());
-            UI.instance.showStructureOverlay(structure.tileNo);
+            UI.instance.showStructureOverlay(structure.type);
             return;
         });
     }

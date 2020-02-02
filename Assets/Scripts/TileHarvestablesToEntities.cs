@@ -9,14 +9,6 @@ using Unity.Mathematics;
 
 public class TileHarvestablesToEntities : MonoBehaviour
 {
-    private static Dictionary<int, HarvestableType> tileToHarvestType = new Dictionary<int, HarvestableType> {
-        {1, HarvestableType.WOOD},
-        {103, HarvestableType.WOOD},
-        {104, HarvestableType.WOOD},
-        {105, HarvestableType.WOOD},
-        {32, HarvestableType.GOLDMINE}
-    };
-    
     // Start is called before the first frame update
     void Start()
     {
@@ -87,7 +79,7 @@ public class TileHarvestablesToEntities : MonoBehaviour
                 });
 
                 int tileNo = int.Parse(tile.name.Substring(tile.name.LastIndexOf('_') + 1));
-                HarvestableType type = tileToHarvestType[tileNo];
+                HarvestableType type = HarvestableData.getHarvestableType(tileNo);
                 entityManager.SetComponentData(entity, new HarvestableComponent {
                     type = type,
                     ressourceAmount = type.Equals(HarvestableType.WOOD) ? 50 : 20000
