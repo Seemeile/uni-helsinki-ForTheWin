@@ -39,14 +39,11 @@ public class UnitControlSystem : ComponentSystem
         {
             //Mouse Released
             // Deselect all previous selected entities
-            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity) =>
+            Entities.WithAll<EntitySelectedComponent>().WithNone<EntityUnselectedComponent>().ForEach((Entity entity) => 
             {
-                PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);   
+                PostUpdateCommands.AddComponent<EntityUnselectedComponent>(entity);
             });
-            Entities.WithAll<StructureSelectedComponent>().ForEach((Entity entity) => {
-                PostUpdateCommands.RemoveComponent<StructureSelectedComponent>(entity);
-                UI.instance.hideStructureOverlay();
-            });
+            
             GameHandler.instance.selectionAreaTransform.gameObject.SetActive(false);
             currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             endPosition.x = currentMousePosition.x;
@@ -79,7 +76,7 @@ public class UnitControlSystem : ComponentSystem
                         entityPosition.y <= upperRightPosition.y)
                     {
                         //Entity inside the selection area
-                        PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
+                        PostUpdateCommands.AddComponent(entity, new EntitySelectedComponent());
                         selectEntityCount++;
                     }
                 }
@@ -89,7 +86,7 @@ public class UnitControlSystem : ComponentSystem
         if (Input.GetMouseButtonDown(1))
         {
             //Right mouse button down
-            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) =>
+            Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) =>
             {
                 moveTo.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 moveTo.move = true;
