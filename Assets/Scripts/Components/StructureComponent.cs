@@ -3,5 +3,5 @@ using Unity.Entities;
 
 public struct StructureComponent : IComponentData 
 {
-    public int tileNo;
+    public BuildingType type;
 }

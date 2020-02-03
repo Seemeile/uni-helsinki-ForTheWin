@@ -7,14 +7,14 @@ using Unity.Transforms;
 using Unity.Rendering;
 using Unity.Mathematics;
 
-public class TileStructuresToEntities : MonoBehaviour
+public class TileHarvestablesToEntities : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
         EntityManager entityManager = World.Active.EntityManager;   
-        EntityArchetype structureArchetype = entityManager.CreateArchetype(
-            typeof(StructureComponent),
+        EntityArchetype harvestableComponent = entityManager.CreateArchetype(
+            typeof(HarvestableComponent),
             typeof(Translation),
             typeof(RenderMesh),
             typeof(LocalToWorld)
@@ -67,23 +67,26 @@ public class TileStructuresToEntities : MonoBehaviour
                 tileMesh.triangles = newTriangles;
                 tileMesh.normals = newNormals;
                 
-                Entity entity = entityManager.CreateEntity(structureArchetype);
+                Entity entity = entityManager.CreateEntity(harvestableComponent);
                 entityManager.SetSharedComponentData(entity, new RenderMesh {
                     material = tileMat,
                     mesh = tileMesh
                 });
 
+                // pivot of the sprite is center so we have to add 0.5 to x and y
                 entityManager.SetComponentData(entity, new Translation {
                     Value = new float3(place.x + 0.5f, place.y + 0.5f, -1)
                 });
 
-                int structureNumber = int.Parse(tile.name.Substring(tile.name.LastIndexOf('_') + 1));
-                BuildingType buildingType = BuildingData.getBuildingType(structureNumber);
-                entityManager.SetComponentData(entity, new StructureComponent {
-                    type = buildingType
+                int tileNo = int.Parse(tile.name.Substring(tile.name.LastIndexOf('_') + 1));
+                HarvestableType type = HarvestableData.getHarvestableType(tileNo);
+                entityManager.SetComponentData(entity, new HarvestableComponent {
+                    type = type,
+                    ressourceAmount = type.Equals(HarvestableType.WOOD) ? 50 : 20000
                 });
             }
         }
+        // delete all tiles because we replaced them with entities
         tilemap.ClearAllTiles();
     }
 }
