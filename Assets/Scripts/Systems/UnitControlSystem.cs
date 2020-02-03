@@ -88,19 +88,21 @@ public class UnitControlSystem : ComponentSystem
             //Right mouse button down
             //Different position
             float3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            List<float3> movePositionList = GetPositionListAround(targetPosition,new float[] { 1f, 2f, 3f },new int[] { 5, 10, 20 });
-            
+            List<float3> movePositionList = GetPositionListAround(targetPosition, new float[] { 1f, 1.9f, 3f }, new int[] { 5, 10, 20 });
             int positionIndex = 0;
+            Debug.Log(movePositionList[0]);
+            Debug.Log(movePositionList[1]);
             Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) =>
             {
+                
                 moveTo.position = movePositionList[positionIndex];
-                positionIndex = (positionIndex +1) % movePositionList.Count;
+                positionIndex = (positionIndex + 1) % movePositionList.Count;
                 moveTo.move = true;
             });
 
         }
     }
-    //Functions which generate the circle position of the units
+    //Functions which generate the circle positions of the units
 
     private List<float3> GetPositionListAround(float3 startPosition, float[] ringDistance, int[] ringPositionCount)
     {
@@ -116,19 +118,18 @@ public class UnitControlSystem : ComponentSystem
     private List<float3> GetPositionListAround(float3 startPosition, float distance, int positionCount)
     {
         List<float3> positionList = new List<float3>();
-        positionList.Add(startPosition);
-        for (int i=0; i< positionCount; i++)
+        for (int i=0; i < positionCount; i++)
         {
             int angle = i * (360 / positionCount);
             float3 dir = ApplyRotationToVector(new float3(0, 1, 0), angle);
             float3 position = startPosition + dir * distance;
-            positionList.Add(position);
+            positionList.Add(position);;
         }
         return positionList;
     }
 
     private float3 ApplyRotationToVector (float3 vec, float angle)
     {
-        return Quaternion.Euler(0, 0,angle) * vec;
+        return Quaternion.Euler(0 , 0 , angle) * vec;
     }
 }

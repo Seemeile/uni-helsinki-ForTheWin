@@ -16,7 +16,7 @@ public class StructureSelectedSystem : ComponentSystem
         Entities.WithAll<EntitySelectedComponent>().WithNone<EntityUnselectedComponent>()
             .ForEach((Entity entity, ref StructureComponent structure) =>
         {
-            Debug.Log("selecting " + entity.Index);
+           // Debug.Log("selecting " + entity.Index);
             // add the StructureSelectedComponent to the first found structure
             PostUpdateCommands.AddComponent(entity, new StructureSelectedComponent());
             
@@ -33,7 +33,7 @@ public class StructureSelectedSystem : ComponentSystem
         // get all structures that received an EntityUnselectedComponent tag
         Entities.WithAll<StructureComponent, EntityUnselectedComponent>().ForEach((Entity entity) => 
         {
-            Debug.Log("unselecting " + entity.Index);
+            //Debug.Log("unselecting " + entity.Index);
             // handle the unselection of the previous selected structure
             Entities.WithAll<StructureSelectedComponent>().ForEach((Entity buildingEntity) => 
             {
