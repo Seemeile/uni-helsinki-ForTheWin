@@ -8009,7 +8009,7 @@ MonoBehaviour:
   demonMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   demonMaterial: {fileID: 2100000, guid: 9d8dbc08eb693c749bbb6a46aac02c95, type: 2}
   selectionAreaTransform: {fileID: 499341869}
-  unitSelectedCircleMaterial: {fileID: 2100000, guid: fa8b9b3d9227e39499771eb9bfa962a8,
+  unitSelectedCircleMaterial: {fileID: 2100000, guid: e7da103f8cc259f4d807b6c2539797a3,
     type: 2}
   unitSelectedCircleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000,
     type: 0}
