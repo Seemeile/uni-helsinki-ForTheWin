@@ -27,9 +27,11 @@ public class UnitMoveSystem : JobComponentSystem
                     // Far from the entity position
                     float z = translation.Value.z;
                     float3 moveDir = math.normalize(moveTo.position - translation.Value);
+                    Debug.Log(moveDir);
                     moveTo.lastMoveDir = moveDir;
                     translation.Value += moveDir * moveTo.moveSpeed * deltaTime;
                     translation.Value.z = z;
+
 
 
                 }
