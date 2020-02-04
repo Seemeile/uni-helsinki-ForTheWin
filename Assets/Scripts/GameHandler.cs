@@ -14,8 +14,7 @@ public class GameHandler : MonoBehaviour
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
-    public Tilemap pathfindingTest;
-    public Grid grid;
+    public Tilemap environmentTilemap;
 
     private EntityManager entityManager;
 

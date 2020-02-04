@@ -103,11 +103,11 @@ public class UnitMoveOrderSystem : ComponentSystem
     {
         //Right mouse button down
         float3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int targetCellPosition = GameHandler.instance.pathfindingTest.WorldToCell(targetPosition);
+        Vector3Int targetCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(targetPosition);
 
         Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) => 
         {
-            Vector3Int currentCellPosition = GameHandler.instance.pathfindingTest.WorldToCell(translation.Value);
+            Vector3Int currentCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
             
             Debug.Log("start path from " + currentCellPosition.x + "," + currentCellPosition.y + " to " 
                 + targetCellPosition.x + "," + targetCellPosition.y);

@@ -2606,7 +2606,7 @@ Tilemap:
   - first: {x: -5, y: -1, z: 0}
     second:
       m_TileIndex: 11
-      m_TileSpriteIndex: 1
+      m_TileSpriteIndex: 9
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_ObjectToInstantiate: {fileID: 0}
@@ -4337,9 +4337,8 @@ Tilemap:
   m_TileSpriteArray:
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 1
-    m_Data: {fileID: 1763669061447063135, guid: 71055f8ec58744ab4acf39594ae71917,
-      type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 20
     m_Data: {fileID: 6305682995648681136, guid: 71055f8ec58744ab4acf39594ae71917,
       type: 3}
@@ -4361,8 +4360,9 @@ Tilemap:
   - m_RefCount: 14
     m_Data: {fileID: -4448781391268378984, guid: 71055f8ec58744ab4acf39594ae71917,
       type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 1763669061447063135, guid: 71055f8ec58744ab4acf39594ae71917,
+      type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -4797794025398410100, guid: 71055f8ec58744ab4acf39594ae71917,
       type: 3}
@@ -8355,8 +8355,7 @@ MonoBehaviour:
     type: 2}
   unitSelectedCircleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000,
     type: 0}
-  pathfindingTest: {fileID: 753801492}
-  grid: {fileID: 1768745609}
+  environmentTilemap: {fileID: 753801492}
 --- !u!4 &1836584337
 Transform:
   m_ObjectHideFlags: 0

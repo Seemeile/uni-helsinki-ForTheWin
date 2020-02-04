@@ -48,9 +48,9 @@ public class Pathfinding : ComponentSystem {
         public int2 endPosition;
         public DynamicBuffer<PathPosition> pathPositionBuffer;
         private Tilemap tilemap;
-
+    
         public void Execute() {
-            tilemap = GameHandler.instance.pathfindingTest;
+            tilemap = GameHandler.instance.environmentTilemap;
 
             int2 translatedStartPosition = tilemapGridToPathfindingGrid(startPosition);
             int2 translatedEndPosition = tilemapGridToPathfindingGrid(endPosition);
@@ -96,6 +96,7 @@ public class Pathfinding : ComponentSystem {
                 pathNode.cameFromNodeIndex = -1;
                 pathNodeArray[pathNode.index] = pathNode;
             }
+
 
              /*
             // Place Testing Walls
