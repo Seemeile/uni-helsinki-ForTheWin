@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 
+/*
 public class UnitControlSystem : ComponentSystem
 {
     private float3 startPosition;
@@ -188,3 +189,4 @@ public class UnitControlSystem : ComponentSystem
         return ressourcePosition;
     }
 }
+*/

@@ -33,14 +33,13 @@ public class BuildUnitSystem : ComponentSystem
         EntityManager entityManager = World.Active.EntityManager;
         EntityArchetype unitArchetype = entityManager.CreateArchetype(
             typeof(Translation),
-            typeof(MoveToComponent),
+            typeof(UnitComponent),
             typeof(RenderMesh),
             typeof(LocalToWorld),
             typeof(SpriteSheetAnimation_Data)
         );
         Entity entity = entityManager.CreateEntity(unitArchetype);
         entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-        entityManager.SetComponentData(entity, new MoveToComponent { move = true, position = spawnPosition, moveSpeed = 20f });
         entityManager.SetComponentData(entity, new SpriteSheetAnimation_Data { currentFrame = 0, frameCount = 4, frameTimer = 0f, frameTimerMax = 0.1f });
         
         Material tileMat = new Material(Shader.Find("Unlit/Transparent"));

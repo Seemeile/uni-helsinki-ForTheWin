@@ -7,7 +7,7 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Jobs;
 using Unity.Burst;
-
+ /*
 
 //Unit go to Move Position
 public class UnitMoveSystem : JobComponentSystem
@@ -54,3 +54,5 @@ public class UnitMoveSystem : JobComponentSystem
 }
     
 
+
+*/

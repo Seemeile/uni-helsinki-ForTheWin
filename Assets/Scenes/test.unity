@@ -3062,15 +3062,6 @@ Tilemap:
       m_ObjectToInstantiate: {fileID: 0}
       m_TileFlags: 1
       m_ColliderType: 1
-  - first: {x: 8, y: 4, z: 0}
-    second:
-      m_TileIndex: 6
-      m_TileSpriteIndex: 9
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_ObjectToInstantiate: {fileID: 0}
-      m_TileFlags: 1
-      m_ColliderType: 1
   - first: {x: 11, y: 4, z: 0}
     second:
       m_TileIndex: 3
@@ -4327,8 +4318,8 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: fe45d1d7a512e41f3809c038710dae14, type: 2}
   - m_RefCount: 286
     m_Data: {fileID: 11400000, guid: f2928f8f61f934a09b10eb9339d27b6f, type: 2}
-  - m_RefCount: 1
-    m_Data: {fileID: 11400000, guid: 4da326417b9604de39e8d931713d7275, type: 2}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 10e5832ea738d40afb3260176ec17594, type: 2}
   - m_RefCount: 14
@@ -4370,9 +4361,8 @@ Tilemap:
   - m_RefCount: 14
     m_Data: {fileID: -4448781391268378984, guid: 71055f8ec58744ab4acf39594ae71917,
       type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: -8428502334417835341, guid: 71055f8ec58744ab4acf39594ae71917,
-      type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: -4797794025398410100, guid: 71055f8ec58744ab4acf39594ae71917,
       type: 3}
@@ -4386,7 +4376,7 @@ Tilemap:
     m_Data: {fileID: 9106854711370248166, guid: 71055f8ec58744ab4acf39594ae71917,
       type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 365
+  - m_RefCount: 364
     m_Data:
       e00: 1
       e01: 0
@@ -4405,7 +4395,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 365
+  - m_RefCount: 364
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -8365,6 +8355,8 @@ MonoBehaviour:
     type: 2}
   unitSelectedCircleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000,
     type: 0}
+  pathfindingTest: {fileID: 753801492}
+  grid: {fileID: 1768745609}
 --- !u!4 &1836584337
 Transform:
   m_ObjectHideFlags: 0
@@ -8390,7 +8382,6 @@ GameObject:
   - component: {fileID: 1847622315}
   - component: {fileID: 1847622314}
   - component: {fileID: 1847622316}
-  - component: {fileID: 1847622317}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -8480,32 +8471,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!61 &1847622317
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1847622313}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.5, y: 0.5}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 1, y: 1.75}
-    newSize: {x: 1, y: 1.75}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
 --- !u!1 &1858492173
 GameObject:
   m_ObjectHideFlags: 0
