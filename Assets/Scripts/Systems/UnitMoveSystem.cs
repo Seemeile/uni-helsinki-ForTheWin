@@ -30,6 +30,7 @@ public class UnitMoveSystem : JobComponentSystem
                     moveTo.lastMoveDir = moveDir;
                     translation.Value += moveDir * moveTo.moveSpeed * deltaTime;
                     translation.Value.z = z;
+                    Debug.Log(moveDir);
 
 
 

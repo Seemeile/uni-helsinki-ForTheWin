@@ -86,22 +86,48 @@ public class UnitControlSystem : ComponentSystem
         if (Input.GetMouseButtonDown(1))
         {
             //Right mouse button down
-            //Different position
             float3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            List<float3> movePositionList = GetPositionListAround(targetPosition, new float[] { 1f, 1.9f, 3f }, new int[] { 5, 10, 20 });
-            int positionIndex = 0;
-            Debug.Log(movePositionList[0]);
-            Debug.Log(movePositionList[1]);
-            Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) =>
+
+            //Checking wether the target is a ressource or not
+            if (IsHarvestable(targetPosition, 0.3f))
             {
-                
-                moveTo.position = movePositionList[positionIndex];
-                positionIndex = (positionIndex + 1) % movePositionList.Count;
-                moveTo.move = true;
-            });
+                //if the target is a ressource, then only one entity will go to harvest it
+                int entityCount = 0;
+                Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) =>
+                {
+                    if (entityCount == 0)
+                    {
+                        float3 ressourcePosition = RessourcePosition(targetPosition,0.3f);
+                        ressourcePosition.x = ressourcePosition.x - 0.5f;
+                        ressourcePosition.y = ressourcePosition.y + 0.5f;
+                        moveTo.position = ressourcePosition;
+                        moveTo.move = true;
+                        //The units start harvesting and becomes unselected
+                        PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
+                        entityCount++;
+                    }
+
+                });
+            }
+
+            else
+            {
+                //If the target is not a ressource, then all the units must go there
+
+                List<float3> movePositionList = GetPositionListAround(targetPosition, new float[] { 1f, 1.9f, 3f }, new int[] { 5, 10, 20 });
+                int positionIndex = 0;
+                Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) =>
+                {
+
+                    moveTo.position = movePositionList[positionIndex];
+                    positionIndex = (positionIndex + 1) % movePositionList.Count;
+                    moveTo.move = true;
+                });
+            }
 
         }
     }
+
     //Functions which generate the circle positions of the units
 
     private List<float3> GetPositionListAround(float3 startPosition, float[] ringDistance, int[] ringPositionCount)
@@ -131,5 +157,34 @@ public class UnitControlSystem : ComponentSystem
     private float3 ApplyRotationToVector (float3 vec, float angle)
     {
         return Quaternion.Euler(0 , 0 , angle) * vec;
+    }
+
+    //Fucntion which dectect if the mouse is pointing at a ressource
+
+    public bool IsHarvestable(float3 currentMousePosition, float distanceMini)
+    {
+        bool harvestable = false;
+        Entities.WithAll<HarvestableComponent>().ForEach((Entity entity, ref Translation translation) =>
+        {
+            if (math.distance(currentMousePosition.x, translation.Value.x) < distanceMini && (math.distance(currentMousePosition.y, translation.Value.y) < distanceMini))
+            {
+                harvestable = true;
+            }
+        });
+        return harvestable;
+    }
+    //Fucntion wich returns the position of the ressource
+
+    public float3 RessourcePosition(float3 currentMousePosition, float distanceMini)
+    {
+        float3 ressourcePosition = Vector3.zero;
+        Entities.WithAll<HarvestableComponent>().ForEach((Entity entity, ref Translation translation) =>
+        {
+            if (math.distance(currentMousePosition.x, translation.Value.x) < distanceMini && (math.distance(currentMousePosition.y, translation.Value.y) < distanceMini))
+            {
+                ressourcePosition = translation.Value;
+            }
+        });
+        return ressourcePosition;
     }
 }
