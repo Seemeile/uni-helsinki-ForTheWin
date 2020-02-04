@@ -39,9 +39,9 @@ public class UnitControlSystem : ComponentSystem
         {
             //Mouse Released
             // Deselect all previous selected entities
-            Entities.WithAll<EntitySelectedComponent>().WithNone<EntityUnselectedComponent>().ForEach((Entity entity) => 
+            Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity) =>
             {
-                PostUpdateCommands.AddComponent<EntityUnselectedComponent>(entity);
+                PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);   
             });
             
             GameHandler.instance.selectionAreaTransform.gameObject.SetActive(false);
