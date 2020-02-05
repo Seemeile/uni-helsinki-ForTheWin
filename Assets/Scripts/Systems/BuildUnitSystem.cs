@@ -15,32 +15,59 @@ public class BuildUnitSystem : ComponentSystem
         Entities.ForEach((Entity clickedEventEntity, ref UnitSlotClickedEvent UnitSlotClickedEvent) => 
         {
             UnitSlotClickedEvent clickEvent = UnitSlotClickedEvent;
-            Entities.WithAll<StructureSelectedComponent>().ForEach((ref StructureComponent structureComponent) => 
+            Entities.WithAll<StructureSelectedComponent>()
+                .ForEach((ref StructureComponent structureComponent, ref Translation translation) => 
             {
                 UnitType[] buildableUnits = BuildingData.getBuildableUnits(structureComponent.type);
-                Debug.Log("clicked " + clickEvent.slotNumber);
                 
-                // test -- spawn new unit
-                float3 spawnPosition = new float3(UnityEngine.Random.Range(-5f, 5f), UnityEngine.Random.Range(-5f, 5f), -10f);
-                spawnUnitRandomly(buildableUnits[clickEvent.slotNumber - 1], spawnPosition);
+                float3 spawnPosition = findFreeNeighborTile(translation.Value);
+
+                if (!spawnPosition.Equals(new float3(0, 0, 0))) 
+                {
+                    spawnUnit(buildableUnits[clickEvent.slotNumber - 1], spawnPosition);
+                }
             });
             entityManager.DestroyEntity(clickedEventEntity);
         });
     }
 
-    private void spawnUnitRandomly(UnitType unit, float3 spawnPosition)
+    private float3 findFreeNeighborTile(float3 buildingTranslation) 
+    {
+        for (int radius = 1; radius <= 5; radius++) 
+        {
+            for (float x = buildingTranslation.x - radius; x <= buildingTranslation.x + radius; x++)
+            {
+                for (float y = buildingTranslation.y - radius; y <= buildingTranslation.y + radius; y++)
+                {
+                    bool foundEntity = false;
+                    Entities.ForEach((ref Translation translation) => 
+                    {
+                        if (x == translation.Value.x && y == translation.Value.y) {
+                            foundEntity = true;
+                        }
+                    });
+                    if (!foundEntity) {
+                        return new float3(x, y, -1);
+                    }
+                }
+            }
+        }
+        return 0f;
+    }
+
+    private void spawnUnit(UnitType unit, float3 spawnPosition)
     {
         EntityManager entityManager = World.Active.EntityManager;
         EntityArchetype unitArchetype = entityManager.CreateArchetype(
             typeof(Translation),
             typeof(UnitComponent),
             typeof(RenderMesh),
-            typeof(LocalToWorld),
-            typeof(SpriteSheetAnimation_Data)
+            typeof(LocalToWorld)
+            //typeof(SpriteSheetAnimation_Data)
         );
         Entity entity = entityManager.CreateEntity(unitArchetype);
         entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-        entityManager.SetComponentData(entity, new SpriteSheetAnimation_Data { currentFrame = 0, frameCount = 4, frameTimer = 0f, frameTimerMax = 0.1f });
+        //entityManager.SetComponentData(entity, new SpriteSheetAnimation_Data { currentFrame = 0, frameCount = 4, frameTimer = 0f, frameTimerMax = 0.1f });
         
         Material tileMat = new Material(Shader.Find("Unlit/Transparent"));
         Sprite tileSprite = Resources.Load<Sprite>("Sprites/Animation/" + UnitData.getUnitSprite(unit));
