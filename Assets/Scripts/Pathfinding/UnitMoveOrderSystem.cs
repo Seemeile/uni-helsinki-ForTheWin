@@ -57,7 +57,13 @@ public class UnitMoveOrderSystem : ComponentSystem
         // Deselect all previous selected entities
         Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity) =>
         {
-            PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);   
+            PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
+            
+            if (EntityManager.HasComponent<StructureSelectedComponent>(entity)) 
+            {
+                PostUpdateCommands.RemoveComponent<StructureSelectedComponent>(entity);
+                UI.instance.hideStructureOverlay();
+            }
         });
         
         GameHandler.instance.selectionAreaTransform.gameObject.SetActive(false);
