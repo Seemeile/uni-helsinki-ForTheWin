@@ -19,7 +19,6 @@ public class PathFollowSystem : ComponentSystem
                     pathPositionBuffer.RemoveAt(pathPositionBuffer.Length - 1);
                     return;
                 }
-
                 float3 moveDir = math.normalize(targetPosition - translation.Value);
                 float moveSpeed = 3f;
 
