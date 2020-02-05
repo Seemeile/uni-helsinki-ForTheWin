@@ -18,6 +18,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Transforms;
 using UnityEngine.Tilemaps;
 
 public class Pathfinding : ComponentSystem {
@@ -29,10 +30,19 @@ public class Pathfinding : ComponentSystem {
     {
         Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> dynamicBuffer, ref PathfindingParamsComponent pathfindingParamsComponent) => 
         { 
+            NativeList<float3> blockingEntities = new NativeList<float3>(Allocator.Temp);            
+            Entities.WithAll<StructureComponent>().ForEach((ref Translation translation) => {
+                blockingEntities.Add(translation.Value - new float3(0.5f, 0.5f, 0));
+            });
+            Entities.WithAll<HarvestableComponent>().ForEach((ref Translation translation) => {
+                blockingEntities.Add(translation.Value - new float3(0.5f, 0.5f, 0));
+            });
+
             FindPathJob findPathJob = new FindPathJob {
                 startPosition = pathfindingParamsComponent.startPosition,
                 endPosition = pathfindingParamsComponent.endPosition,
-                pathPositionBuffer = dynamicBuffer
+                pathPositionBuffer = dynamicBuffer,
+                blockingEntities = blockingEntities
             };
 
             findPathJob.Execute();
@@ -47,8 +57,9 @@ public class Pathfinding : ComponentSystem {
         public int2 startPosition;
         public int2 endPosition;
         public DynamicBuffer<PathPosition> pathPositionBuffer;
+        public NativeList<float3> blockingEntities;
         private Tilemap tilemap;
-    
+
         public void Execute() {
             tilemap = GameHandler.instance.environmentTilemap;
 
@@ -88,10 +99,21 @@ public class Pathfinding : ComponentSystem {
                 pathNode.CalculateFCost();
 
                 Vector3Int localPlace = new Vector3Int(pos.x, pos.y, pos.z);
-                if (tilemap.HasTile(localPlace)) {
+                if (tilemap.HasTile(localPlace)) 
+                {
                     pathNode.isWalkable = false;
-                } else {
+                } 
+                else 
+                {
                     pathNode.isWalkable = true;
+                    // check if this gridCell is an blocking entity
+                    foreach (float3 item in blockingEntities)
+                    {
+                        if (item.x == pos.x && item.y == pos.y)
+                        {
+                            pathNode.isWalkable = false;
+                        }
+                    }
                 }
                 pathNode.cameFromNodeIndex = -1;
                 pathNodeArray[pathNode.index] = pathNode;
