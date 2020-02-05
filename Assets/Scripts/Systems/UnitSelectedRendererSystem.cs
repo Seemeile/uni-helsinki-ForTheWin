@@ -11,7 +11,8 @@ public class UnitSelectedRenderer : ComponentSystem
 
         Entities.WithAll<EntitySelectedComponent>().ForEach((ref Translation translation) =>
         {
-            float3 position = translation.Value + new float3(0, -.3f, -1f);
+            float3 position = translation.Value + new float3(0, -.325f, 0);
+            position.z = 0f;
             Graphics.DrawMesh(
                 GameHandler.instance.unitSelectedCircleMesh,
                 position, Quaternion.identity,

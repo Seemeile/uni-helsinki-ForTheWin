@@ -110,20 +110,34 @@ public class UnitMoveOrderSystem : ComponentSystem
         //Right mouse button down
         float3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int targetCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(targetPosition);
+        Debug.Log("targetCellPosition " + targetCellPosition);
+        List<Vector3Int> positionListAround = GetPositionListAround(targetCellPosition,armySize());
+        int index = 0;
+      /*  Debug.Log("positionListAround(0) " + positionListAround[0]);
+        Debug.Log("positionListAround(1) " + positionListAround[1]);
+        Debug.Log("positionListAround(2) " + positionListAround[2]);
+        Debug.Log("positionListAround(3) " + positionListAround[3]);
+        Debug.Log("positionListAround(4) " + positionListAround[4]);
+        */
+
+
 
         Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) => 
         {
             Vector3Int currentCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
-            
-            Debug.Log("start path from " + currentCellPosition.x + "," + currentCellPosition.y + " to " 
-                + targetCellPosition.x + "," + targetCellPosition.y);
+            Vector3Int finalTargetCellPosition = positionListAround[index];
+           // Debug.Log(finalTargetCellPosition);
+          //  Debug.Log("start path from " + currentCellPosition.x + "," + currentCellPosition.y + " to " 
+             //   + targetCellPosition.x + "," + targetCellPosition.y);
 
             EntityManager.AddComponentData(entity, new PathfindingParamsComponent {
                 startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                endPosition = new int2(targetCellPosition.x, targetCellPosition.y)
+                endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
             });
             EntityManager.AddBuffer<PathPosition>(entity);
+            index++;
         });
+
 
         //Checking wether the target is a ressource or not
         /*
@@ -161,4 +175,111 @@ public class UnitMoveOrderSystem : ComponentSystem
         }
         */
     }
+
+    /*private List<float3> GetPositionListAround(float3 startPosition, float distance, int positionCount)
+    {
+        List<float3> positionListArround;
+        float3 positionInter;
+        for (int i= 0 ; i< positionCount ; i++)
+        {
+            positionInter = 
+        }
+
+    }*/
+
+  // Return the list of possible cells around the target cell
+    private List<Vector3Int> GetPositionListAround(Vector3Int startPosition, int positionCount)
+    {
+        List<Vector3Int> listPosition = new List<Vector3Int>();
+        List<Vector3Int> listPositionFinal = new List<Vector3Int>();
+        listPosition.Add(startPosition);
+        listPositionFinal.Add(startPosition);
+        int givenPositionCount =1;
+        int count =1;
+        int intermediaryCount = 0;
+        Vector3Int dir = Vector3Int.down;
+        Vector3Int potentialCell;
+        while (givenPositionCount < positionCount)
+        {
+            if (intermediaryCount == 2)
+            {
+                count++;
+                intermediaryCount = 0;
+            }
+            dir = NewDir(dir);
+            for (int k=0; k < count ; k++)
+            {
+                potentialCell = listPosition[listPosition.Count - 1] + dir;
+                listPosition.Add(potentialCell);
+                Debug.Log("potential Cell " + potentialCell);
+                if (ThisCellIsFree(potentialCell))
+                {
+                    listPositionFinal.Add(potentialCell);
+                    givenPositionCount++;
+                }
+            }
+            intermediaryCount++;
+        }
+        
+        return listPositionFinal;
+    }
+    
+    //Return the next direction
+    private Vector3Int NewDir(Vector3Int dir)
+    {
+        Vector3Int futurDir = Vector3Int.zero;
+
+        if(dir == Vector3Int.up)
+        {
+            futurDir = Vector3Int.left;
+        }
+        if (dir == Vector3Int.left)
+        {
+            futurDir = Vector3Int.down;
+        }
+        if (dir == Vector3Int.down)
+        {
+            futurDir = Vector3Int.right;
+        }
+        if (dir == Vector3Int.right)
+        {
+            futurDir = Vector3Int.up;
+        }
+        return futurDir;
+    }
+
+    //Check if one cell is free or available
+
+    private bool ThisCellIsFree(Vector3Int cell)
+    {
+        bool isFree = true;
+
+        Entities.WithAll<Translation>().ForEach((Entity entity, ref Translation translation) =>
+        {
+            Vector3Int structurCell = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
+            if (structurCell.x == cell.x  && structurCell.y == cell.y)
+            {
+                Debug.Log("Cell non libre " + cell);
+                isFree = false;
+            }
+        });
+        if(cell.x < -9 || cell.x > 10 || cell.y < -7 || cell.y > 6)
+        {
+            isFree = false;
+        }
+
+        return isFree;
+    }
+    //return the number of selected entities
+    private int armySize()
+    {
+        int number = 0;
+        Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity) =>
+        {
+           number ++;
+        });
+        return number;
+    }
+
+    //
 }
