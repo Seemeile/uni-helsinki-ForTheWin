@@ -17,6 +17,8 @@ public class ToolsRendererComponent : ComponentSystem
         currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currentMouseCell = GameHandler.instance.environmentTilemap.WorldToCell(currentMousePosition);
 
+        Cursor.visible = true;
+
         Entities.WithAll<Translation, HarvestableComponent>().ForEach((Entity entity, ref Translation translation, ref HarvestableComponent harvestableComponent) =>
         {
             entityCell = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
@@ -26,6 +28,7 @@ public class ToolsRendererComponent : ComponentSystem
 
                 if (currentMouseCell.x == entityCell.x && currentMouseCell.y == entityCell.y)
                 {
+                    Cursor.visible = false;
                     currentMousePosition.z = -10f;
                     Graphics.DrawMesh(
                    GameHandler.instance.axeMesh,
@@ -35,13 +38,14 @@ public class ToolsRendererComponent : ComponentSystem
                    );
 
                 };
+                
             }
 
             if (harvestableComponent.type.Equals(HarvestableType.GOLDMINE))
-            {
-
+            {//If the mouse is avove a gold mine
                 if (currentMouseCell.x == entityCell.x && currentMouseCell.y == entityCell.y)
                 {
+                    Cursor.visible = false;
                     currentMousePosition.z = -10f;
                     Graphics.DrawMesh(
                    GameHandler.instance.pickAxeMesh,
@@ -53,6 +57,7 @@ public class ToolsRendererComponent : ComponentSystem
                 };
             }
         });
+        
         
      
 

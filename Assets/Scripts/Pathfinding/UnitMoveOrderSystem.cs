@@ -115,16 +115,16 @@ public class UnitMoveOrderSystem : ComponentSystem
         Vector3Int targetCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(targetPosition);
         Vector3Int finalTargetCellPosition=Vector3Int.zero;
 
+        //if the target is a ressource, then only one entity will go to harvest it
         if (IsHarvestable(targetCellPosition))
-        {//if the target is a ressource, then only one entity will go to harvest it
-            Debug.Log("isHarvestable");
+        {
+
             int entityCount = 0;
             Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
             {
                 Vector3Int currentCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
                 if (entityCount ==0)
                 {
-                    Debug.Log("assignement");
                     finalTargetCellPosition.x = targetCellPosition.x;
                     finalTargetCellPosition.y = targetCellPosition.y +1;
 
@@ -140,6 +140,44 @@ public class UnitMoveOrderSystem : ComponentSystem
                 
                 entityCount++;
 
+            });
+        }
+        //If the target is an enemy
+        if (IsAnEnemy(targetCellPosition))
+        {
+            int index = 1;
+            List<Vector3Int> positionListAround = GetListOfAdjacentCells(targetCellPosition);
+            int entityCount = 0;
+            Debug.Log(positionListAround.Count);
+            Debug.Log("celltarget " + targetCellPosition);
+            Debug.Log("positionlistAround " + positionListAround[1]);
+            Debug.Log("positionlistAround " + positionListAround[2]);
+            Debug.Log("positionlistAround " + positionListAround[3]);
+            Debug.Log("positionlistAround " + positionListAround[4]);
+            Debug.Log("positionlistAround " + positionListAround[5]);
+            Debug.Log("positionlistAround " + positionListAround[6]);
+            Debug.Log("positionlistAround " + positionListAround[7]);
+            Debug.Log("positionlistAround " + positionListAround[8]);
+            Debug.Log("positionlistAround " + positionListAround[9]);
+
+
+
+            Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
+            {
+                if (entityCount <positionListAround.Count-1)
+                { 
+                    Vector3Int currentCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
+                    finalTargetCellPosition = positionListAround[index];
+
+                    EntityManager.AddComponentData(entity, new PathfindingParamsComponent
+                    {
+                        startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
+                        endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
+                    });
+                    EntityManager.AddBuffer<PathPosition>(entity);
+                    index++;
+                }
+                entityCount++;
             });
         }
         else
@@ -164,43 +202,6 @@ public class UnitMoveOrderSystem : ComponentSystem
 
         }
 
-
-
-        //Checking wether the target is a ressource or not
-        /*
-        if (IsHarvestable(targetPosition, 0.3f))
-        {
-            //if the target is a ressource, then only one entity will go to harvest it
-            int entityCount = 0;
-            Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) =>
-            {
-                if (entityCount == 0)
-                {
-                    float3 ressourcePosition = RessourcePosition(targetPosition,0.3f);
-                    ressourcePosition.x = ressourcePosition.x - 0.5f;
-                    ressourcePosition.y = ressourcePosition.y + 0.5f;
-                    moveTo.position = ressourcePosition;
-                    moveTo.move = true;
-                    //The units start harvesting and becomes unselected
-                    PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
-                    entityCount++;
-                }
-
-            });
-        } else {
-            //If the target is not a ressource, then all the units must go there
-
-            List<float3> movePositionList = GetPositionListAround(targetPosition, new float[] { 1f, 1.9f, 3f }, new int[] { 5, 10, 20 });
-            int positionIndex = 0;
-            Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) =>
-            {
-
-                moveTo.position = movePositionList[positionIndex];
-                positionIndex = (positionIndex + 1) % movePositionList.Count;
-                moveTo.move = true;
-            });
-        }
-        */
     }
 
 
@@ -228,7 +229,6 @@ public class UnitMoveOrderSystem : ComponentSystem
             {
                 potentialCell = listPosition[listPosition.Count - 1] + dir;
                 listPosition.Add(potentialCell);
-                Debug.Log("potential Cell " + potentialCell);
                 if (ThisCellIsFree(potentialCell))
                 {
                     listPositionFinal.Add(potentialCell);
@@ -276,7 +276,6 @@ public class UnitMoveOrderSystem : ComponentSystem
             Vector3Int structurCell = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
             if (structurCell.x == cell.x && structurCell.y == cell.y)
             {
-                Debug.Log("Cell non libre " + cell);
                 isFree = false;
             }
         });
@@ -299,7 +298,7 @@ public class UnitMoveOrderSystem : ComponentSystem
     }
 
     //Check if the mouse is above an harvestable entity
-    public bool IsHarvestable(Vector3Int currentMouseCell)
+    private bool IsHarvestable(Vector3Int currentMouseCell)
     {
         bool harvestable = false;
         Vector3Int entityCell;
@@ -313,5 +312,57 @@ public class UnitMoveOrderSystem : ComponentSystem
             }
         });
         return harvestable;
+    }
+
+    //Check if the mouse is above an enemy entity
+
+    private bool IsAnEnemy(Vector3Int currentMouseCell)
+    {
+        bool enemy = false;
+        Vector3Int entityCell;
+        Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
+        {
+            entityCell = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
+
+            if (entityCell.x == currentMouseCell.x && entityCell.y == currentMouseCell.y)
+            {
+                enemy = true;
+            }
+        });
+        return enemy;
+    }
+
+    //Return le list of free adjacent cells around one position
+    private List<Vector3Int> GetListOfAdjacentCells(Vector3Int targetCell)
+    {
+        List<Vector3Int> listPosition = new List<Vector3Int>();
+        Vector3Int dir = Vector3Int.down;
+        Vector3Int potentialCell;
+        listPosition.Add(targetCell);
+        int intermediaryCount = 1;
+        int triedPosition = 0;
+        int count = 0;
+
+        while (triedPosition < 8)
+        {
+            if (intermediaryCount == 2)
+            {
+                count++;
+                intermediaryCount = 0;
+            }
+            dir = NewDir(dir);
+            for (int k = 0; k < count; k++)
+            {
+                potentialCell = listPosition[listPosition.Count - 1] + dir;
+
+                if (ThisCellIsFree(potentialCell))
+                {
+                    listPosition.Add(potentialCell);
+                }
+                triedPosition++;
+            }
+            intermediaryCount++;
+        }
+            return listPosition;
     }
 }
