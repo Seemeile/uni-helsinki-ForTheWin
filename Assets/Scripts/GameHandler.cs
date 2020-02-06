@@ -15,6 +15,10 @@ public class GameHandler : MonoBehaviour
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
     public Tilemap environmentTilemap;
+    public Mesh axeMesh;
+    public Material axeMaterial;
+    public Mesh pickAxeMesh;
+    public Material pickAxeMaterial;
 
     private EntityManager entityManager;
 
@@ -84,6 +88,8 @@ public class GameHandler : MonoBehaviour
             material = mat,
         });
     }
+
+    
 }
 
 

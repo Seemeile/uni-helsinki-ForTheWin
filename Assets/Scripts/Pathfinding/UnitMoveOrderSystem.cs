@@ -12,8 +12,10 @@ public class UnitMoveOrderSystem : ComponentSystem
     private float3 endPosition;
     private float3 selectionAreaSize;
     private float3 currentMousePosition;
+    private Vector3Int currentMouseCell;
     private float3 lowerLeftPosition;
     private float3 upperRightPosition;
+
 
     protected override void OnUpdate() 
     {
