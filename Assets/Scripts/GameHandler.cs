@@ -14,17 +14,29 @@ public class GameHandler : MonoBehaviour
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
-    public Tilemap environmentTilemap;
+    public Tilemap tilemap;
     public Mesh axeMesh;
     public Material axeMaterial;
     public Mesh pickAxeMesh;
     public Material pickAxeMaterial;
+    [HideInInspector]
+    public int tilemapSizeX;
+    [HideInInspector]
+    public int tilemapSizeY;
+    [HideInInspector]
+    public int[] tilemapCellBoundsX;
+    [HideInInspector]
+    public int[] tilemapCellBoundsY;
 
     private EntityManager entityManager;
 
     private void Awake()
     {
         instance = this;
+        tilemapSizeX = tilemap.size.x;
+        tilemapSizeY = tilemap.size.y;
+        tilemapCellBoundsX = new int[]{ tilemap.cellBounds.xMin, tilemap.cellBounds.xMax };
+        tilemapCellBoundsY = new int[]{ tilemap.cellBounds.yMin, tilemap.cellBounds.yMax };
     }
 
     private void Start()
@@ -36,6 +48,7 @@ public class GameHandler : MonoBehaviour
             typeof(UnitComponent),
             typeof(RenderMesh),
             typeof(LocalToWorld)
+            //typeof(IsWalkableComponent)
             //typeof(SpriteSheetAnimation_Data)
         );
 
@@ -87,6 +100,12 @@ public class GameHandler : MonoBehaviour
             mesh = mesh,
             material = mat,
         });
+
+/*
+        entityManager.SetComponentData(entity, new IsWalkableComponent {
+            Value = false
+        });
+        */
     }
 
     

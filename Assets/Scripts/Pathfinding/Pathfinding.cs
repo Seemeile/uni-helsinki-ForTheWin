@@ -30,14 +30,12 @@ public class Pathfinding : ComponentSystem {
     {
         Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> dynamicBuffer, ref PathfindingParamsComponent pathfindingParamsComponent) => 
         { 
-            NativeList<float3> blockingEntities = new NativeList<float3>(Allocator.Temp);            
-            Entities.WithAll<StructureComponent>().ForEach((ref Translation translation) => {
-                blockingEntities.Add(translation.Value - new float3(0.5f, 0.5f, 0));
+            NativeList<float3> blockingEntities = new NativeList<float3>(Allocator.Temp);
+            Entities.ForEach((ref Translation translation, ref IsWalkableComponent isWalkableComponent) => {
+                if (!isWalkableComponent.Value) {
+                    blockingEntities.Add(translation.Value - new float3(0.5f, 0.5f, 0));
+                }
             });
-            Entities.WithAll<HarvestableComponent>().ForEach((ref Translation translation) => {
-                blockingEntities.Add(translation.Value - new float3(0.5f, 0.5f, 0));
-            });
-
             FindPathJob findPathJob = new FindPathJob {
                 startPosition = pathfindingParamsComponent.startPosition,
                 endPosition = pathfindingParamsComponent.endPosition,
@@ -58,85 +56,48 @@ public class Pathfinding : ComponentSystem {
         public int2 endPosition;
         public DynamicBuffer<PathPosition> pathPositionBuffer;
         public NativeList<float3> blockingEntities;
-        private Tilemap tilemap;
+        private int tilemapSizeX;
+        private int tilemapSizeY;
+        private int[] tilemapCellBoundsX;
+        private int[] tilemapCellBoundsY;
 
         public void Execute() {
-            tilemap = GameHandler.instance.environmentTilemap;
+            tilemapSizeX = GameHandler.instance.tilemapSizeX;
+            tilemapSizeY = GameHandler.instance.tilemapSizeY;
+            tilemapCellBoundsX = GameHandler.instance.tilemapCellBoundsX;
+            tilemapCellBoundsY = GameHandler.instance.tilemapCellBoundsY;
 
             int2 translatedStartPosition = tilemapGridToPathfindingGrid(startPosition);
             int2 translatedEndPosition = tilemapGridToPathfindingGrid(endPosition);
 
-            NativeArray<PathNode> pathNodeArray = new NativeArray<PathNode>(tilemap.size.x * tilemap.size.y, Allocator.Temp);
-/*
-            for (int x = 0; x < gridSize.x; x++) {
-                for (int y = 0; y < gridSize.y; y++) {
+            NativeArray<PathNode> pathNodeArray = new NativeArray<PathNode>(tilemapSizeX * tilemapSizeY, Allocator.Temp);
+
+            for (int x = 0; x < tilemapSizeX; x++) 
+            {
+                for (int y = 0; y < tilemapSizeY; y++)
+                {
                     PathNode pathNode = new PathNode();
                     pathNode.x = x;
                     pathNode.y = y;
-                    pathNode.index = CalculateIndex(x, y, gridSize.x);
-
+                    pathNode.index = CalculateIndex(x, y, tilemapSizeX);
                     pathNode.gCost = int.MaxValue;
-                    pathNode.hCost = CalculateDistanceCost(new int2(x, y), endPosition);
+                    pathNode.hCost = CalculateDistanceCost(new int2(x, y), translatedEndPosition);
                     pathNode.CalculateFCost();
 
                     pathNode.isWalkable = true;
-                    pathNode.cameFromNodeIndex = -1;
-
-                    pathNodeArray[pathNode.index] = pathNode;
-                }
-            }*/
-            foreach (var pos in tilemap.cellBounds.allPositionsWithin)
-            {
-                // -14 ... 15
-                int2 gridPosition = tilemapGridToPathfindingGrid(new int2(pos.x, pos.y));
-                
-                PathNode pathNode = new PathNode();
-                pathNode.x = gridPosition.x;
-                pathNode.y = gridPosition.y;
-                pathNode.index = CalculateIndex(gridPosition.x, gridPosition.y, tilemap.size.x);
-                pathNode.gCost = int.MaxValue;
-                pathNode.hCost = CalculateDistanceCost(new int2(gridPosition.x, gridPosition.y), translatedEndPosition);
-                pathNode.CalculateFCost();
-
-                Vector3Int localPlace = new Vector3Int(pos.x, pos.y, pos.z);
-                if (tilemap.HasTile(localPlace)) 
-                {
-                    pathNode.isWalkable = false;
-                } 
-                else 
-                {
-                    pathNode.isWalkable = true;
-                    // check if this gridCell is an blocking entity
                     foreach (float3 item in blockingEntities)
                     {
-                        if (item.x == pos.x && item.y == pos.y)
+                        int2 entityTilemapPosition = pathfindingGridToTilemapGrid(new int2(x, y));
+                        if (item.x == entityTilemapPosition.x && item.y == entityTilemapPosition.y)
                         {
                             pathNode.isWalkable = false;
                         }
                     }
+                    
+                    pathNode.cameFromNodeIndex = -1;
+                    pathNodeArray[pathNode.index] = pathNode;
                 }
-                pathNode.cameFromNodeIndex = -1;
-                pathNodeArray[pathNode.index] = pathNode;
             }
-
-
-             /*
-            // Place Testing Walls
-            {
-                PathNode walkablePathNode = pathNodeArray[CalculateIndex(1, 0, gridSize.x)];
-                walkablePathNode.SetIsWalkable(false);
-                pathNodeArray[CalculateIndex(1, 0, gridSize.x)] = walkablePathNode;
-
-                walkablePathNode = pathNodeArray[CalculateIndex(1, 1, gridSize.x)];
-                walkablePathNode.SetIsWalkable(false);
-                pathNodeArray[CalculateIndex(1, 1, gridSize.x)] = walkablePathNode;
-
-                walkablePathNode = pathNodeArray[CalculateIndex(1, 2, gridSize.x)];
-                walkablePathNode.SetIsWalkable(false);
-                pathNodeArray[CalculateIndex(1, 2, gridSize.x)] = walkablePathNode;
-            }
-            */
-
 
             NativeArray<int2> neighbourOffsetArray = new NativeArray<int2>(8, Allocator.Temp);
             neighbourOffsetArray[0] = new int2(-1, 0); // Left
@@ -148,9 +109,9 @@ public class Pathfinding : ComponentSystem {
             neighbourOffsetArray[6] = new int2(+1, -1); // Right Down
             neighbourOffsetArray[7] = new int2(+1, +1); // Right Up
 
-            int endNodeIndex = CalculateIndex(translatedEndPosition.x, translatedEndPosition.y, tilemap.size.x);
+            int endNodeIndex = CalculateIndex(translatedEndPosition.x, translatedEndPosition.y, tilemapSizeX);
 
-            PathNode startNode = pathNodeArray[CalculateIndex(translatedStartPosition.x, translatedStartPosition.y, tilemap.size.x)];
+            PathNode startNode = pathNodeArray[CalculateIndex(translatedStartPosition.x, translatedStartPosition.y, tilemapSizeX)];
             startNode.gCost = 0;
             startNode.CalculateFCost();
             pathNodeArray[startNode.index] = startNode;
@@ -183,12 +144,12 @@ public class Pathfinding : ComponentSystem {
                     int2 neighbourOffset = neighbourOffsetArray[i];
                     int2 neighbourPosition = new int2(currentNode.x + neighbourOffset.x, currentNode.y + neighbourOffset.y);
 
-                    if (!IsPositionInsideGrid(neighbourPosition, new int2(tilemap.size.x, tilemap.size.y))) {
+                    if (!IsPositionInsideGrid(neighbourPosition, new int2(tilemapSizeX, tilemapSizeY))) {
                         // Neighbour not valid position
                         continue;
                     }
 
-                    int neighbourNodeIndex = CalculateIndex(neighbourPosition.x, neighbourPosition.y, tilemap.size.x);
+                    int neighbourNodeIndex = CalculateIndex(neighbourPosition.x, neighbourPosition.y, tilemapSizeX);
 
                     if (closedList.Contains(neighbourNodeIndex)) {
                         // Already searched this node
@@ -254,11 +215,11 @@ public class Pathfinding : ComponentSystem {
         }
 
         private int2 tilemapGridToPathfindingGrid(int2 coord) {
-            return new int2(coord.x + math.abs(tilemap.cellBounds.xMin), coord.y + math.abs(tilemap.cellBounds.yMin));
+            return new int2(coord.x + math.abs(tilemapCellBoundsX[0]), coord.y + math.abs(tilemapCellBoundsY[0]));
         }
 
         private int2 pathfindingGridToTilemapGrid(int2 coord) {
-            return new int2(coord.x - math.abs(tilemap.cellBounds.xMin), coord.y - math.abs(tilemap.cellBounds.yMin));
+            return new int2(coord.x - math.abs(tilemapCellBoundsX[0]), coord.y - math.abs(tilemapCellBoundsY[0]));
         }
 
         private bool IsPositionInsideGrid(int2 gridPosition, int2 gridSize) {

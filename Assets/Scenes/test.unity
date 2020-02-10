@@ -952,6 +952,7 @@ GameObject:
   - component: {fileID: 753801490}
   - component: {fileID: 753801492}
   - component: {fileID: 753801491}
+  - component: {fileID: 753801493}
   m_Layer: 0
   m_Name: Tilemap_Environment
   m_TagString: Untagged
@@ -4420,6 +4421,18 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &753801493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 753801489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfe28edf48e234e0cac4efb690bb4513, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &886019093
 GameObject:
   m_ObjectHideFlags: 0
@@ -8354,7 +8367,7 @@ MonoBehaviour:
     type: 2}
   unitSelectedCircleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000,
     type: 0}
-  environmentTilemap: {fileID: 753801492}
+  tilemap: {fileID: 753801492}
   axeMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   axeMaterial: {fileID: 2100000, guid: 9416f6986294bb04baae928beabfeccc, type: 2}
   pickAxeMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}

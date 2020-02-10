@@ -112,7 +112,7 @@ public class UnitMoveOrderSystem : ComponentSystem
     {
         //Right mouse button down
         float3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int targetCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(targetPosition);
+        Vector3Int targetCellPosition = GameHandler.instance.tilemap.WorldToCell(targetPosition);
         Vector3Int finalTargetCellPosition=Vector3Int.zero;
 
         //if the target is a ressource, then only one entity will go to harvest it
@@ -122,7 +122,7 @@ public class UnitMoveOrderSystem : ComponentSystem
             int entityCount = 0;
             Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
             {
-                Vector3Int currentCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
+                Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
                 if (entityCount ==0)
                 {
                     finalTargetCellPosition.x = targetCellPosition.x;
@@ -166,7 +166,7 @@ public class UnitMoveOrderSystem : ComponentSystem
             {
                 if (entityCount <positionListAround.Count-1)
                 { 
-                    Vector3Int currentCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
+                    Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
                     finalTargetCellPosition = positionListAround[index];
 
                     EntityManager.AddComponentData(entity, new PathfindingParamsComponent
@@ -187,7 +187,7 @@ public class UnitMoveOrderSystem : ComponentSystem
 
             Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
             {
-                Vector3Int currentCellPosition = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
+                Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
                 finalTargetCellPosition = positionListAround[index];
 
                 EntityManager.AddComponentData(entity, new PathfindingParamsComponent
@@ -273,7 +273,7 @@ public class UnitMoveOrderSystem : ComponentSystem
 
         Entities.WithAll<Translation>().ForEach((Entity entity, ref Translation translation) =>
         {
-            Vector3Int structurCell = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
+            Vector3Int structurCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
             if (structurCell.x == cell.x && structurCell.y == cell.y)
             {
                 isFree = false;
@@ -304,7 +304,7 @@ public class UnitMoveOrderSystem : ComponentSystem
         Vector3Int entityCell;
         Entities.WithAll<HarvestableComponent>().ForEach((Entity entity, ref Translation translation) =>
         {
-            entityCell = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
+            entityCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
 
             if (entityCell.x == currentMouseCell.x && entityCell.y == currentMouseCell.y)
             {
@@ -322,7 +322,7 @@ public class UnitMoveOrderSystem : ComponentSystem
         Vector3Int entityCell;
         Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
         {
-            entityCell = GameHandler.instance.environmentTilemap.WorldToCell(translation.Value);
+            entityCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
 
             if (entityCell.x == currentMouseCell.x && entityCell.y == currentMouseCell.y)
             {

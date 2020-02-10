@@ -7,14 +7,13 @@ using Unity.Transforms;
 using Unity.Rendering;
 using Unity.Mathematics;
 
-public class TileStructuresToEntities : MonoBehaviour
+public class TileEnvironmentsToEntities : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
         EntityManager entityManager = World.Active.EntityManager;   
-        EntityArchetype structureArchetype = entityManager.CreateArchetype(
-            typeof(StructureComponent),
+        EntityArchetype blockedEnvironmentArchetype = entityManager.CreateArchetype(
             typeof(Translation),
             typeof(RenderMesh),
             typeof(LocalToWorld),
@@ -68,7 +67,7 @@ public class TileStructuresToEntities : MonoBehaviour
                 tileMesh.triangles = newTriangles;
                 tileMesh.normals = newNormals;
                 
-                Entity entity = entityManager.CreateEntity(structureArchetype);
+                Entity entity = entityManager.CreateEntity(blockedEnvironmentArchetype);
                 entityManager.SetSharedComponentData(entity, new RenderMesh {
                     material = tileMat,
                     mesh = tileMesh
@@ -76,12 +75,6 @@ public class TileStructuresToEntities : MonoBehaviour
 
                 entityManager.SetComponentData(entity, new Translation {
                     Value = new float3(place.x + 0.5f, place.y + 0.5f, -1)
-                });
-
-                int structureNumber = int.Parse(tile.name.Substring(tile.name.LastIndexOf('_') + 1));
-                BuildingType buildingType = BuildingData.getBuildingType(structureNumber);
-                entityManager.SetComponentData(entity, new StructureComponent {
-                    type = buildingType
                 });
 
                 entityManager.SetComponentData(entity, new IsWalkableComponent {
