@@ -6,6 +6,7 @@ using Unity.Entities;
 using Unity.Burst;
 using Unity.Mathematics;
 
+/*
 public class SpriteSheetAnimation_Animate : JobComponentSystem
 {
     [BurstCompile]
@@ -32,3 +33,4 @@ public class SpriteSheetAnimation_Animate : JobComponentSystem
         return job.Schedule(this, inputDeps);
     }
 }
+*/

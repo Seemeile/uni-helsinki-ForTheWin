@@ -112,5 +112,9 @@ public class BuildUnitSystem : ComponentSystem
             mesh = tileMesh,
             material = tileMat,
         });
+
+        entityManager.SetComponentData(entity, new UnitComponent {
+            unitType = unit
+        });
     }
 }

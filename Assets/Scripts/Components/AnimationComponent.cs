@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 
-public struct SpriteSheetAnimation_Data : IComponentData
+public struct AnimationComponent : IComponentData
 {
     public int currentFrame;
     public int frameCount;

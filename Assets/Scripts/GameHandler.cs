@@ -47,7 +47,8 @@ public class GameHandler : MonoBehaviour
             typeof(Translation),
             typeof(UnitComponent),
             typeof(RenderMesh),
-            typeof(LocalToWorld)
+            typeof(LocalToWorld),
+            typeof(AnimationComponent)
             //typeof(IsWalkableComponent)
             //typeof(SpriteSheetAnimation_Data)
         );
@@ -94,13 +95,17 @@ public class GameHandler : MonoBehaviour
 
         float3 spawnPos = new float3(+0.5f, +0.5f, -1);
         entityManager.SetComponentData(entity, new Translation { Value = spawnPos });
-        //entityManager.SetComponentData(entity, new SpriteSheetAnimation_Data { currentFrame = 0, frameCount = 4, frameTimer = 0f, frameTimerMax = 0.1f });
-        entityManager.SetSharedComponentData(entity, new RenderMesh
-        {
+        entityManager.SetComponentData(entity, new AnimationComponent { 
+            currentFrame = 0, frameCount = 4, frameTimer = 0f, frameTimerMax = 0.25f 
+        });
+        entityManager.SetSharedComponentData(entity, new RenderMesh {
             mesh = mesh,
             material = mat,
         });
 
+        entityManager.SetComponentData(entity, new UnitComponent {
+            unitType = UnitType.KNIGHT
+        });
 /*
         entityManager.SetComponentData(entity, new IsWalkableComponent {
             Value = false

@@ -5,5 +5,6 @@ using Unity.Jobs;
 
 public struct UnitComponent : IComponentData
 {
+    public UnitType unitType;
 }
 
