@@ -147,41 +147,46 @@ public class UnitMoveOrderSystem : ComponentSystem
         {
             List<Vector3Int> positionListAround = GetListOfEnemies(targetCellPosition);
             List<Vector3Int> positionsAdjaccent = GetListOfAdjacentCells(GetListOfEnemies(targetCellPosition));
-
-            Debug.Log("nomber of elements " + positionListAround.Count);
-            Debug.Log("celltarget " + targetCellPosition);
-
-            for (int j = 0; j < positionListAround.Count; j++)
+            List<Vector3Int> positionsFinal = new List<Vector3Int>();
+            int entityCount = 0;
+            int index = 0;
+ 
+            for (int k =0; k < positionsAdjaccent.Count ; k++)
             {
-                Debug.Log("positionlistAround " + positionListAround[j]);
+                if(ThisCellIsFree(positionsAdjaccent[k]))
+                {
+                    positionsFinal.Add(positionsAdjaccent[k]);
+                }
             }
-            for (int j = 0; j <positionsAdjaccent.Count; j++)
+            for (int j = 0; j < positionsFinal.Count; j++)
             {
-                Debug.Log("positionAdjaccent " + positionsAdjaccent[j]);
+                Debug.Log("positionsFinal " + positionsFinal[j]);
             }
+
+
+             Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
+             {
+                 if (entityCount < positionsFinal.Count)
+                 {
+                     Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+                     finalTargetCellPosition = positionsFinal[index];
+
+                     EntityManager.AddComponentData(entity, new PathfindingParamsComponent
+                     {
+                         startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
+                         endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
+                     });
+                     EntityManager.AddBuffer<PathPosition>(entity);
+                     index++;
+                 }
+                 //Unselect all the entities who cannot fight
+                 else
+                 {
+                     PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
+                 }
+                 entityCount++;
+             });
         }
-
-
-
-
-        /*  Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
-          {
-              if (entityCount <positionListAround.Count-1)
-              { 
-                  Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                  finalTargetCellPosition = positionListAround[index];
-
-                  EntityManager.AddComponentData(entity, new PathfindingParamsComponent
-                  {
-                      startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                      endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
-                  });
-                  EntityManager.AddBuffer<PathPosition>(entity);
-                  index++;
-              }
-              entityCount++;
-          });
-      }*/
         else
         {
             // the target in a free cell
@@ -282,6 +287,7 @@ public class UnitMoveOrderSystem : ComponentSystem
                 isFree = false;
             }
         });
+   
         if (cell.x < -9 || cell.x > 10 || cell.y < -7 || cell.y > 6)
         {
             isFree = false;
@@ -338,9 +344,14 @@ public class UnitMoveOrderSystem : ComponentSystem
     //Return le list of free adjacent cells around one position
     private List<Vector3Int> GetListOfAdjacentCells(List<Vector3Int> listEnemy)
     {
+        
         List<Vector3Int> listPosition = new List<Vector3Int>();
         List<int> listExtremum = GetListOfExtremum(listEnemy);
-        List<Vector3Int> potentialCells = new List<Vector3Int>(4);
+        List<Vector3Int> potentialCells = new List<Vector3Int>();
+        potentialCells.Add(listEnemy[0]);
+        potentialCells.Add(listEnemy[0]);
+        potentialCells.Add(listEnemy[0]);
+        potentialCells.Add(listEnemy[0]);
       
         
 
@@ -411,8 +422,7 @@ public class UnitMoveOrderSystem : ComponentSystem
     //Return the maximum and minimum values of x and y cells
     private List<int> GetListOfExtremum(List<Vector3Int> listPosition)
     {
-        List<int> listExtremum = new List<int> { listPosition[0].x, listPosition[1].x, listPosition[2].y, listPosition[3].y };
-
+        List<int> listExtremum = new List<int> { listPosition[0].x, listPosition[0].x, listPosition[0].y, listPosition[0].y };
         for (int k=0; k<listPosition.Count;k++)
         {
             if (listPosition[k].x < listExtremum[0])

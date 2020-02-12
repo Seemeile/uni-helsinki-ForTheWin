@@ -8372,6 +8372,12 @@ MonoBehaviour:
   axeMaterial: {fileID: 2100000, guid: 9416f6986294bb04baae928beabfeccc, type: 2}
   pickAxeMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   pickAxeMaterial: {fileID: 2100000, guid: 1a2abf3071060234ab4d2de6d76f0043, type: 2}
+  swordMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  swordMaterial: {fileID: 2100000, guid: 6d5f17acc97f0ea429f7cef3ee363f46, type: 2}
+  tilemapSizeX: 0
+  tilemapSizeY: 0
+  tilemapCellBoundsX: 
+  tilemapCellBoundsY: 
 --- !u!4 &1836584337
 Transform:
   m_ObjectHideFlags: 0

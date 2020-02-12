@@ -19,6 +19,8 @@ public class GameHandler : MonoBehaviour
     public Material axeMaterial;
     public Mesh pickAxeMesh;
     public Material pickAxeMaterial;
+    public Mesh swordMesh;
+    public Material swordMaterial;
     [HideInInspector]
     public int tilemapSizeX;
     [HideInInspector]
