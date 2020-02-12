@@ -42,7 +42,11 @@ public class BuildUnitSystem : ComponentSystem
                     bool foundEntity = false;
                     Entities.ForEach((ref Translation translation) => 
                     {
-                        if (x == translation.Value.x && y == translation.Value.y) {
+                        if (translation.Value.x > x - 0.1f 
+                            && translation.Value.x < x + 0.1f
+                            && translation.Value.y < y + 0.1f
+                            && translation.Value.y > y - 0.1f) 
+                        {
                             foundEntity = true;
                         }
                     });
