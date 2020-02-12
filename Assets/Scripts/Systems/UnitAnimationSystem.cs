@@ -20,7 +20,7 @@ public class UnitAnimationSystem : ComponentSystem
                 animationComponent.frameTimer -= animationComponent.frameTimerMax;
                 animationComponent.currentFrame = (animationComponent.currentFrame + 1) % animationComponent.frameCount;
             }
-            string curAnimationName = UnitData.getUnitAnimation(unitComponent.unitType, animationComponent.currentFrame);
+            string curAnimationName = UnitData.getUnitAnimation(unitComponent.unitType, animationComponent.animationType, animationComponent.currentFrame);
             RenderMesh renderer = entityManager.GetSharedComponentData<RenderMesh>(entity);
             Sprite curAnimationSprite = Resources.Load<Sprite>("Sprites/Animation/" + curAnimationName);
             renderer.material.mainTexture = curAnimationSprite.texture;

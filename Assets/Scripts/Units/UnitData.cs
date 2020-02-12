@@ -14,15 +14,34 @@ public class UnitData
         {UnitType.ELF, "elf_f_idle_anim_f0" },
     };
 
-    private static Dictionary<UnitType, string[]> unitAnimations = new Dictionary<UnitType, string[]> {
+    private static Dictionary<UnitType, string[]> idleAnimations = new Dictionary<UnitType, string[]> {
         {UnitType.PEASANT, new string[]{ "skelet_idle_anim_f0"} },
         {UnitType.KNIGHT, new string[]{ "knight_f_idle_anim_f0", "knight_f_idle_anim_f1", "knight_f_idle_anim_f2", "knight_f_idle_anim_f3"} },
         {UnitType.ELF, new string[]{ "elf_f_idle_anim_f0"} },
     };
 
-    public static string getUnitAnimation(UnitType unitType, int animationIndex)
+    private static Dictionary<UnitType, string[]> runAnimations = new Dictionary<UnitType, string[]> {
+        {UnitType.PEASANT, new string[]{ "skelet_idle_anim_f0"} },
+        {UnitType.KNIGHT, new string[]{ "knight_f_run_anim_f0", "knight_f_run_anim_f1", "knight_f_run_anim_f2", "knight_f_run_anim_f3"} },
+        {UnitType.ELF, new string[]{ "elf_f_idle_anim_f0"} },
+    };
+
+    public static string getUnitAnimation(UnitType unitType, UnitAnimation unitAnimation, int animationIndex)
     {
-        return unitAnimations[unitType][animationIndex];
+        if (UnitAnimation.RUN == unitAnimation) {
+            return runAnimations[unitType][animationIndex];
+        } else {
+            return idleAnimations[unitType][animationIndex];
+        }
+    }
+
+    public static int getUnitAnimationCount(UnitType unitType, UnitAnimation unitAnimation) 
+    {
+        if (UnitAnimation.RUN == unitAnimation) {
+            return runAnimations[unitType].Length;
+        } else {
+            return idleAnimations[unitType].Length;
+        }
     }
 
     public static string getUnitSprite(UnitType unitType)
@@ -99,10 +118,11 @@ public class UnitData
 
         // Set animation
         entityManager.SetComponentData(entity, new AnimationComponent {
+            animationType = UnitAnimation.IDLE,
             currentFrame = 0,
-            frameCount = unitAnimations[unitType].Length,
+            frameCount = idleAnimations[unitType].Length,
             frameTimer = 0f,
-            frameTimerMax = 0.25f
+            frameTimerMax = 0.3f
         });
     }
 }
