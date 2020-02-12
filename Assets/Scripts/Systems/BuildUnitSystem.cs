@@ -4,7 +4,6 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Unity.Rendering;
 
 public class BuildUnitSystem : ComponentSystem
 {
@@ -20,18 +19,19 @@ public class BuildUnitSystem : ComponentSystem
             {
                 UnitType[] buildableUnits = BuildingData.getBuildableUnits(structureComponent.type);
                 
-                float3 spawnPosition = findFreeNeighborTile(translation.Value);
+                int2 spawnPosition = findFreeNeighborTile(translation.Value);
 
-                if (!spawnPosition.Equals(new float3(0, 0, 0))) 
+                if (!spawnPosition.Equals(new int2(0, 0))) 
                 {
-                    spawnUnit(buildableUnits[clickEvent.slotNumber - 1], spawnPosition);
+                    UnitData.spawnUnit(buildableUnits[clickEvent.slotNumber - 1], spawnPosition.x, spawnPosition.y);
+                    //spawnUnit(buildableUnits[clickEvent.slotNumber - 1], spawnPosition);
                 }
             });
             entityManager.DestroyEntity(clickedEventEntity);
         });
     }
 
-    private float3 findFreeNeighborTile(float3 buildingTranslation) 
+    private int2 findFreeNeighborTile(float3 buildingTranslation) 
     {
         for (int radius = 1; radius <= 5; radius++) 
         {
@@ -47,14 +47,15 @@ public class BuildUnitSystem : ComponentSystem
                         }
                     });
                     if (!foundEntity) {
-                        return new float3(x, y, -1);
+                        return new int2((int) x, (int) y);
                     }
                 }
             }
         }
-        return 0f;
+        return 0;
     }
 
+    /*
     private void spawnUnit(UnitType unit, float3 spawnPosition)
     {
         EntityManager entityManager = World.Active.EntityManager;
@@ -117,4 +118,5 @@ public class BuildUnitSystem : ComponentSystem
             unitType = unit
         });
     }
+    */
 }
