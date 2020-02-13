@@ -15,6 +15,8 @@ public class UnitMoveOrderSystem : ComponentSystem
     private Vector3Int currentMouseCell;
     private float3 lowerLeftPosition;
     private float3 upperRightPosition;
+    //public int[] tilemapCellBoundsX = GameHandler.instance.tilemapCellBoundsX;
+    //public int[] tilemapCellBoundsY = GameHandler.instance.tilemapCellBoundsY;
 
 
     protected override void OnUpdate()
@@ -56,17 +58,20 @@ public class UnitMoveOrderSystem : ComponentSystem
 
     private void handleLeftMouseReleased()
     {
-        // Deselect all previous selected entities
-        Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity) =>
-        {
-            PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
-
-            if (EntityManager.HasComponent<StructureSelectedComponent>(entity))
+        // Deselect all previous selected entities oly if the key ctrl is not pressed
+        if (!Input.GetKey(KeyCode.LeftShift))
+        { 
+            Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity) =>
             {
-                PostUpdateCommands.RemoveComponent<StructureSelectedComponent>(entity);
-                UI.instance.hideStructureOverlay();
-            }
-        });
+                PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
+
+                if (EntityManager.HasComponent<StructureSelectedComponent>(entity))
+                {
+                    PostUpdateCommands.RemoveComponent<StructureSelectedComponent>(entity);
+                    UI.instance.hideStructureOverlay();
+                }
+            });
+        }
 
         GameHandler.instance.selectionAreaTransform.gameObject.SetActive(false);
         currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -108,9 +113,15 @@ public class UnitMoveOrderSystem : ComponentSystem
         });
     }
 
+    //Right mouse button down
     private void handleRightMousePressed()
     {
-        //Right mouse button down
+        //First deselect all the building entities
+        Entities.WithAll<StructureSelectedComponent>().ForEach((Entity entity) =>
+        {
+            PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
+        });
+        
         float3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int targetCellPosition = GameHandler.instance.tilemap.WorldToCell(targetPosition);
         Vector3Int finalTargetCellPosition=Vector3Int.zero;
@@ -118,12 +129,12 @@ public class UnitMoveOrderSystem : ComponentSystem
         //if the target is a ressource, then only one entity will go to harvest it
         if (IsHarvestable(targetCellPosition))
         {
-
             int entityCount = 0;
+            
             Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
             {
                 Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                if (entityCount ==0)
+                if (entityCount == 0)
                 {
                     finalTargetCellPosition.x = targetCellPosition.x;
                     finalTargetCellPosition.y = targetCellPosition.y +1;
@@ -143,9 +154,9 @@ public class UnitMoveOrderSystem : ComponentSystem
             });
         }
         //If the target is an enemy
-        if (IsAnEnemy(targetCellPosition))
-        {
-            List<Vector3Int> positionListAround = GetListOfEnemies(targetCellPosition);
+        else if (IsAnEnemy(targetCellPosition))
+        { 
+        List<Vector3Int> positionListAround = GetListOfEnemies(targetCellPosition);
             List<Vector3Int> positionsAdjaccent = GetListOfAdjacentCells(GetListOfEnemies(targetCellPosition));
             List<Vector3Int> positionsFinal = new List<Vector3Int>();
             int entityCount = 0;
@@ -158,11 +169,6 @@ public class UnitMoveOrderSystem : ComponentSystem
                     positionsFinal.Add(positionsAdjaccent[k]);
                 }
             }
-            for (int j = 0; j < positionsFinal.Count; j++)
-            {
-                Debug.Log("positionsFinal " + positionsFinal[j]);
-            }
-
 
              Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
              {
@@ -279,7 +285,7 @@ public class UnitMoveOrderSystem : ComponentSystem
     {
         bool isFree = true;
 
-        Entities.WithAll<IsWalkableComponent>().ForEach((Entity entity, ref Translation translation) =>
+        Entities.WithAll<BlockableEntityComponent>().ForEach((Entity entity, ref Translation translation) =>
         {
             Vector3Int structurCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
             if (structurCell.x == cell.x && structurCell.y == cell.y)

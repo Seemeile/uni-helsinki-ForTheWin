@@ -18,7 +18,7 @@ public class TileHarvestablesToEntities : MonoBehaviour
             typeof(Translation),
             typeof(RenderMesh),
             typeof(LocalToWorld),
-            typeof(IsWalkableComponent)
+            typeof(BlockableEntityComponent)
         );
 
         Tilemap tilemap = GetComponent<Tilemap>();
@@ -86,9 +86,7 @@ public class TileHarvestablesToEntities : MonoBehaviour
                     ressourceAmount = type.Equals(HarvestableType.WOOD) ? 50 : 20000
                 });
 
-                entityManager.SetComponentData(entity, new IsWalkableComponent {
-                    Value = false
-                });
+                
             }
         }
         // delete all tiles because we replaced them with entities

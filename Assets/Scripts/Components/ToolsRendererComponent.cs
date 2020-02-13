@@ -11,7 +11,7 @@ public class ToolsRendererComponent : ComponentSystem
     private Vector3Int currentMouseCell;
     private Vector3Int entityCell;
     private bool isSelected =false;
-    private Vector3Int entitySelectedcell;
+
 
 
     protected override void OnUpdate()
@@ -19,15 +19,16 @@ public class ToolsRendererComponent : ComponentSystem
         currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currentMouseCell = GameHandler.instance.tilemap.WorldToCell(currentMousePosition);
 
-
         Cursor.visible = true;
         isSelected = false;
 
         Entities.WithAll<UnitComponent, EntitySelectedComponent>().ForEach((Entity entity, ref Translation translation) =>
         {
             isSelected = true;
-            entitySelectedcell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
         });
+        
+
+
 
         //If a unit is selected, then we can order it to do something
         if (isSelected)
@@ -72,12 +73,13 @@ public class ToolsRendererComponent : ComponentSystem
                 }
             });
 
-            Entities.WithAll<Translation, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
+            Entities.WithAll<Translation, UnitComponent>().WithNone<EntitySelectedComponent>().ForEach((Entity entity, ref Translation translation) =>
             {
                 entityCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
             //if the mouse is over a unit which is no the current selected unit
-            if (currentMouseCell.x == entityCell.x && currentMouseCell.y == entityCell.y && currentMouseCell.x != entitySelectedcell.x && currentMouseCell.y != entitySelectedcell.y)
+            if (currentMouseCell.x == entityCell.x && currentMouseCell.y == entityCell.y)
                 {
+                    
                     Cursor.visible = false;
                     currentMousePosition.z = -10f;
                     Graphics.DrawMesh(

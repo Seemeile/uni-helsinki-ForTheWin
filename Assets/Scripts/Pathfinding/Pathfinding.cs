@@ -31,10 +31,10 @@ public class Pathfinding : ComponentSystem {
         Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> dynamicBuffer, ref PathfindingParamsComponent pathfindingParamsComponent) => 
         { 
             NativeList<float3> blockingEntities = new NativeList<float3>(Allocator.Temp);
-            Entities.ForEach((ref Translation translation, ref IsWalkableComponent isWalkableComponent) => {
-                if (!isWalkableComponent.Value) {
-                    blockingEntities.Add(translation.Value - new float3(0.5f, 0.5f, 0));
-                }
+            Entities.ForEach((ref Translation translation, ref BlockableEntityComponent blockableEntityComponent) => 
+            {
+                blockingEntities.Add(translation.Value - new float3(0.5f, 0.5f, 0));
+                
             });
             FindPathJob findPathJob = new FindPathJob {
                 startPosition = pathfindingParamsComponent.startPosition,
