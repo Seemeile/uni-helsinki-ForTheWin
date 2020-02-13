@@ -9,7 +9,12 @@ public class PathFollowSystem : ComponentSystem
 {
     protected override void OnUpdate() 
     {
-        Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref UnitComponent unitComponent, ref AnimationComponent animationComponent) => {
+        Entities.ForEach((Entity entity, 
+            DynamicBuffer<PathPosition> pathPositionBuffer, 
+            ref Translation translation, 
+            ref UnitComponent unitComponent, 
+            ref AnimationComponent animationComponent) 
+        => {
             if (pathPositionBuffer.Length > 0) {
                 // change to run animation while moving
                 if (UnitAnimation.RUN != animationComponent.animationType) {
