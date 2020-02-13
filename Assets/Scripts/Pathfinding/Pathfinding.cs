@@ -24,7 +24,6 @@ public class Pathfinding : ComponentSystem {
             Entities.ForEach((ref Translation translation, ref BlockableEntityComponent blockableEntityComponent) => 
             {
                 blockingEntities.Add(translation.Value - new float3(0.5f, 0.5f, 0));
-                
             });
             FindPathJob findPathJob = new FindPathJob {
                 startPosition = pathfindingParamsComponent.startPosition,

@@ -118,6 +118,7 @@ public class UnitData
 
         // Set animation
         entityManager.SetComponentData(entity, new AnimationComponent {
+            direction = UnitDirection.RIGHT,
             animationType = UnitAnimation.IDLE,
             currentFrame = 0,
             frameCount = idleAnimations[unitType].Length,

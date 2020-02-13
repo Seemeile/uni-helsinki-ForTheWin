@@ -5,6 +5,7 @@ using Unity.Entities;
 
 public struct AnimationComponent : IComponentData
 {
+    public UnitDirection direction;
     public UnitAnimation animationType;
     public int currentFrame;
     public int frameCount;
