@@ -18,7 +18,7 @@ public class TileStructuresToEntities : MonoBehaviour
             typeof(Translation),
             typeof(RenderMesh),
             typeof(LocalToWorld),
-            typeof(IsWalkableComponent)
+            typeof(BlockableEntityComponent)
         );
 
         Tilemap tilemap = GetComponent<Tilemap>();
@@ -84,9 +84,7 @@ public class TileStructuresToEntities : MonoBehaviour
                     type = buildingType
                 });
 
-                entityManager.SetComponentData(entity, new IsWalkableComponent {
-                    Value = false
-                });
+              
             }
         }
         tilemap.ClearAllTiles();

@@ -17,7 +17,7 @@ public class TileEnvironmentsToEntities : MonoBehaviour
             typeof(Translation),
             typeof(RenderMesh),
             typeof(LocalToWorld),
-            typeof(IsWalkableComponent)
+            typeof(BlockableEntityComponent)
         );
 
         Tilemap tilemap = GetComponent<Tilemap>();
@@ -77,9 +77,7 @@ public class TileEnvironmentsToEntities : MonoBehaviour
                     Value = new float3(place.x + 0.5f, place.y + 0.5f, -1)
                 });
 
-                entityManager.SetComponentData(entity, new IsWalkableComponent {
-                    Value = false
-                });
+                
             }
         }
         tilemap.ClearAllTiles();
