@@ -176,11 +176,18 @@ public class UnitMoveOrderSystem : ComponentSystem
 
             });
         }
+        //If the target is an ally : do nothing
+
+        else if (IsAnAlly(targetCellPosition))
+        {
+            
+        }
+
         //If the target is an enemy
         else if (IsAnEnemy(targetCellPosition))
         { 
-        List<Vector3Int> positionListAround = GetListOfEnemies(targetCellPosition);
-            List<Vector3Int> positionsAdjaccent = GetListOfAdjacentCells(GetListOfEnemies(targetCellPosition));
+            List<Vector3Int> positionListAround = GetListOfUnits(targetCellPosition);
+            List<Vector3Int> positionsAdjaccent = GetListOfAdjacentCells(positionListAround);
             List<Vector3Int> positionsFinal = new List<Vector3Int>();
             int entityCount = 0;
             int index = 0;
@@ -216,7 +223,7 @@ public class UnitMoveOrderSystem : ComponentSystem
                  entityCount++;
              });
         }
-        else
+        else 
         {
             // the target in a free cell
             List<Vector3Int> positionListAround = GetPositionListAround(targetCellPosition, armySize());
@@ -358,16 +365,33 @@ public class UnitMoveOrderSystem : ComponentSystem
     {
         bool enemy = false;
         Vector3Int entityCell;
-        Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
+        Entities.WithAll<TeamComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
         {
             entityCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
 
-            if (entityCell.x == currentMouseCell.x && entityCell.y == currentMouseCell.y)
+            if (entityCell.x == currentMouseCell.x && entityCell.y == currentMouseCell.y && team.number ==1)
             {
                 enemy = true;
             }
         });
         return enemy;
+    }
+    // Check is TerrainHeightmapSyncControl mouse is above an ally entity
+
+    private bool IsAnAlly(Vector3Int currentMouseCell)
+    {
+        bool ally = false;
+        Vector3Int entityCell;
+        Entities.WithAll<TeamComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
+        {
+            entityCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+
+            if (entityCell.x == currentMouseCell.x && entityCell.y == currentMouseCell.y && team.number == 0)
+            {
+                ally = true;
+            }
+        });
+        return ally;
     }
 
     //Return le list of free adjacent cells around one position
@@ -412,8 +436,8 @@ public class UnitMoveOrderSystem : ComponentSystem
             return listPosition;
     }
 
-    // Return the list of every enemy next to the targetcell
-    private List<Vector3Int> GetListOfEnemies(Vector3Int targetCell)
+    // Return the list of every units next to the targetcell
+    private List<Vector3Int> GetListOfUnits(Vector3Int targetCell)
     {
         List<Vector3Int> listPosition = new List<Vector3Int>();
         Vector3Int dir = Vector3Int.down;

@@ -59,7 +59,8 @@ public class UnitData
             typeof(RenderMesh),
             typeof(LocalToWorld),
             typeof(AnimationComponent),
-            typeof(TeamComponent) 
+            typeof(TeamComponent),
+            typeof(HealthComponent)
             //typeof(IsWalkableComponent)
         );
 
@@ -131,6 +132,13 @@ public class UnitData
         entityManager.SetComponentData(entity, new TeamComponent {
             number = 0
         });
+
+        // Set unit health
+        entityManager.SetComponentData(entity, new HealthComponent
+        {
+            health = 100,
+            isPresent = false
+        });
     }
 
 
@@ -144,7 +152,8 @@ public class UnitData
             typeof(RenderMesh),
             typeof(LocalToWorld),
             typeof(AnimationComponent),
-            typeof(TeamComponent)
+            typeof(TeamComponent),
+            typeof(HealthComponent)
         //typeof(IsWalkableComponent)
         );
 
@@ -221,5 +230,13 @@ public class UnitData
         {
             number = 1
         });
+
+        // Set unit health
+        entityManager.SetComponentData(entity, new HealthComponent
+        {
+            health = 100,
+            isPresent = false,
+        });
     }
 }
+

@@ -73,11 +73,11 @@ public class ToolsRendererComponent : ComponentSystem
                 }
             });
 
-            Entities.WithAll<Translation, UnitComponent>().WithNone<EntitySelectedComponent>().ForEach((Entity entity, ref Translation translation) =>
+            Entities.WithAll<Translation, UnitComponent, TeamComponent>().WithNone<EntitySelectedComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
             {
                 entityCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
             //if the mouse is over a unit which is no the current selected unit
-            if (currentMouseCell.x == entityCell.x && currentMouseCell.y == entityCell.y)
+            if (currentMouseCell.x == entityCell.x && currentMouseCell.y == entityCell.y && team.number == 1)
                 {
                     
                     Cursor.visible = false;
