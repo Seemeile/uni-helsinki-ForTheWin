@@ -8367,6 +8367,9 @@ MonoBehaviour:
     type: 2}
   unitSelectedCircleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000,
     type: 0}
+  enemyUnitCircleMaterial: {fileID: 2100000, guid: f8b134992a8ce6540bb9ef9f28b632e1,
+    type: 2}
+  enemyUnitCircleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   tilemap: {fileID: 753801492}
   axeMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   axeMaterial: {fileID: 2100000, guid: 9416f6986294bb04baae928beabfeccc, type: 2}

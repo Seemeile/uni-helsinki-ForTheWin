@@ -92,10 +92,11 @@ public class UnitMoveOrderSystem : ComponentSystem
             upperRightPosition += new float3(+1f, +1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * .5f;
             selectOnlyOneEntity = true;
         }
-        //Selection
+        //Selection of entities
         int selectEntityCount = 0;
-        Entities.ForEach((Entity entity, ref Translation translation) =>
+        Entities.WithAll<TeamComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
         {
+            Debug.Log("ok");
             if (selectOnlyOneEntity == false || selectEntityCount < 1)
             {
                 float3 entityPosition = translation.Value;
@@ -103,7 +104,8 @@ public class UnitMoveOrderSystem : ComponentSystem
                 if (entityPosition.x >= lowerLeftPosition.x &&
                     entityPosition.y >= lowerLeftPosition.y &&
                     entityPosition.x <= upperRightPosition.x &&
-                    entityPosition.y <= upperRightPosition.y)
+                    entityPosition.y <= upperRightPosition.y &&
+                    team.number !=1 )
                 {
                     //Entity inside the selection area
                     PostUpdateCommands.AddComponent(entity, new EntitySelectedComponent());
@@ -111,6 +113,27 @@ public class UnitMoveOrderSystem : ComponentSystem
                 }
             }
         });
+
+        Entities.WithAny<StructureComponent, HarvestableComponent>().ForEach((Entity entity, ref Translation translation) =>
+        {
+            Debug.Log("ok");
+            if (selectOnlyOneEntity == false || selectEntityCount < 1)
+            {
+                float3 entityPosition = translation.Value;
+
+                if (entityPosition.x >= lowerLeftPosition.x &&
+                    entityPosition.y >= lowerLeftPosition.y &&
+                    entityPosition.x <= upperRightPosition.x &&
+                    entityPosition.y <= upperRightPosition.y )
+                {
+                    //Entity inside the selection area
+                    PostUpdateCommands.AddComponent(entity, new EntitySelectedComponent());
+                    selectEntityCount++;
+                }
+            }
+        });
+
+
     }
 
     //Right mouse button down

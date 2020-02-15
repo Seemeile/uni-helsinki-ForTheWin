@@ -14,6 +14,8 @@ public class GameHandler : MonoBehaviour
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
+    public Material enemyUnitCircleMaterial;
+    public Mesh enemyUnitCircleMesh;
     public Tilemap tilemap;
     public Mesh axeMesh;
     public Material axeMaterial;
@@ -43,7 +45,10 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
-        UnitData.spawnUnit(UnitType.KNIGHT, 0, 0);
+        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 0, 0);
+        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, 0);
+        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 0, -1);
+        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, -1);
     }
 }
 
