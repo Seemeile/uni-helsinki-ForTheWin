@@ -10,6 +10,8 @@ using System;
 
 public class FightSystem : ComponentSystem
 {
+    float time = 1;
+
     protected override void OnUpdate()
     {
         Entities.WithAll<TeamComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
@@ -24,9 +26,21 @@ public class FightSystem : ComponentSystem
             }
         });
 
+        time += Time.deltaTime;
+        if (time > 1)
+        {
+            Entities.WithAll<FightComponent>().ForEach((Entity entity, ref Translation translation, ref HealthComponent health, ref TeamComponent team) =>
+            {
+                Fight(EnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)));
+            });
+            time = 0;
+        }
         Entities.WithAll<FightComponent>().ForEach((Entity entity, ref Translation translation, ref HealthComponent health, ref TeamComponent team) =>
         {
-            Fight(GameHandler.instance.tilemap.WorldToCell(translation.Value),EnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)));
+            if(health.health<=0)
+            {
+                PostUpdateCommands.DestroyEntity(entity);
+            }
         });
     }
 
@@ -84,7 +98,7 @@ public class FightSystem : ComponentSystem
         return isFighting;
     }
 
-    private void Fight(Vector3Int unitPosition , Vector3Int enemyPosition)
+    private void Fight(Vector3Int enemyPosition)
     {
         Entities.WithAll<FightComponent>().ForEach((Entity entity, ref Translation translation, ref HealthComponent health, ref TeamComponent team) =>
         {
@@ -93,12 +107,7 @@ public class FightSystem : ComponentSystem
             {
                 health.health -= 10;
             }
-            if (unitPosition.x == currentCellPosition.x && unitPosition.y == currentCellPosition.y)
-            {
-                health.health -= 10;
-            }
         });
-        GameHandler.instance.Dps();
 
         
     }

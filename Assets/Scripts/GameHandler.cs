@@ -56,15 +56,7 @@ public class GameHandler : MonoBehaviour
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, -1);
     }
 
-    public void Dps()
-    {
-        StartCoroutine("MyCoroutine");
-    }
-
-    IEnumerator MyCoroutine()
-    {
-        yield return new WaitForSeconds(1);
-    }
+  
 }
 
 
