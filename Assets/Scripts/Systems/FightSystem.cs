@@ -99,6 +99,7 @@ public class FightSystem : ComponentSystem
             }
         });
         GameHandler.instance.Dps();
+
         
     }
 
