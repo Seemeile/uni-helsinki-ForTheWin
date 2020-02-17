@@ -96,7 +96,7 @@ public class UnitMoveOrderSystem : ComponentSystem
         int selectEntityCount = 0;
         Entities.WithAll<TeamComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
         {
-            Debug.Log("ok");
+
             if (selectOnlyOneEntity == false || selectEntityCount < 1)
             {
                 float3 entityPosition = translation.Value;
@@ -116,7 +116,6 @@ public class UnitMoveOrderSystem : ComponentSystem
 
         Entities.WithAny<StructureComponent, HarvestableComponent>().ForEach((Entity entity, ref Translation translation) =>
         {
-            Debug.Log("ok");
             if (selectOnlyOneEntity == false || selectEntityCount < 1)
             {
                 float3 entityPosition = translation.Value;
@@ -206,7 +205,6 @@ public class UnitMoveOrderSystem : ComponentSystem
                  {
                      Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
                      finalTargetCellPosition = positionsFinal[index];
-
                      EntityManager.AddComponentData(entity, new PathfindingParamsComponent
                      {
                          startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
@@ -214,6 +212,8 @@ public class UnitMoveOrderSystem : ComponentSystem
                      });
                      EntityManager.AddBuffer<PathPosition>(entity);
                      index++;
+                     PostUpdateCommands.AddComponent(entity, new FightComponent());
+
                  }
                  //Unselect all the entities who cannot fight
                  else

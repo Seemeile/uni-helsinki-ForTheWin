@@ -136,9 +136,9 @@ public class UnitData
         // Set unit health
         entityManager.SetComponentData(entity, new HealthComponent
         {
-            health = 100,
-            isPresent = false
+            health = 100
         });
+   
     }
 
 
@@ -234,9 +234,10 @@ public class UnitData
         // Set unit health
         entityManager.SetComponentData(entity, new HealthComponent
         {
-            health = 100,
-            isPresent = false,
+            health = 100
+
         });
+      
     }
 }
 

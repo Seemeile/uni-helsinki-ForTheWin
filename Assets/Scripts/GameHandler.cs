@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Rendering;
-using Unity.Mathematics;
+using System;
 using UnityEngine.Tilemaps;
 
 public class GameHandler : MonoBehaviour
@@ -12,7 +15,7 @@ public class GameHandler : MonoBehaviour
     public Mesh demonMesh;
     public Material demonMaterial;
     public Transform selectionAreaTransform;
-    public Transform healthBarTransform;
+    public GameObject healthBarGameObject;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
     public Material enemyUnitCircleMaterial;
@@ -24,6 +27,7 @@ public class GameHandler : MonoBehaviour
     public Material pickAxeMaterial;
     public Mesh swordMesh;
     public Material swordMaterial;
+
     [HideInInspector]
     public int tilemapSizeX;
     [HideInInspector]
@@ -50,6 +54,16 @@ public class GameHandler : MonoBehaviour
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, 0);
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 0, -1);
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, -1);
+    }
+
+    public void Dps()
+    {
+        StartCoroutine("MyCoroutine");
+    }
+
+    IEnumerator MyCoroutine()
+    {
+        yield return new WaitForSeconds(1);
     }
 }
 
