@@ -15,15 +15,15 @@ public class UnitData
     };
 
     private static Dictionary<UnitType, string[]> idleAnimations = new Dictionary<UnitType, string[]> {
-        {UnitType.PEASANT, new string[]{ "skelet_idle_anim_f0"} },
+        {UnitType.PEASANT, new string[]{ "skelet_idle_anim_f0", "skelet_idle_anim_f1", "skelet_idle_anim_f2", "skelet_idle_anim_f3"} },
         {UnitType.KNIGHT, new string[]{ "knight_f_idle_anim_f0", "knight_f_idle_anim_f1", "knight_f_idle_anim_f2", "knight_f_idle_anim_f3"} },
-        {UnitType.ELF, new string[]{ "elf_f_idle_anim_f0"} },
+        {UnitType.ELF, new string[]{ "elf_f_idle_anim_f0", "elf_f_idle_anim_f1", "elf_f_idle_anim_f2", "elf_f_idle_anim_f3"} },
     };
 
     private static Dictionary<UnitType, string[]> runAnimations = new Dictionary<UnitType, string[]> {
-        {UnitType.PEASANT, new string[]{ "skelet_idle_anim_f0"} },
+        {UnitType.PEASANT, new string[]{ "skelet_run_anim_f0", "skelet_run_anim_f1", "skelet_run_anim_f2", "skelet_run_anim_f3"} },
         {UnitType.KNIGHT, new string[]{ "knight_f_run_anim_f0", "knight_f_run_anim_f1", "knight_f_run_anim_f2", "knight_f_run_anim_f3"} },
-        {UnitType.ELF, new string[]{ "elf_f_idle_anim_f0"} },
+        {UnitType.ELF, new string[]{ "elf_f_run_anim_f0", "elf_f_run_anim_f1", "elf_f_run_anim_f2", "elf_f_run_anim_f3"} },
     };
 
     public static string getUnitAnimation(UnitType unitType, UnitAnimation unitAnimation, int animationIndex)

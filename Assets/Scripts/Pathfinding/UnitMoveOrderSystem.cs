@@ -153,26 +153,28 @@ public class UnitMoveOrderSystem : ComponentSystem
         {
             int entityCount = 0;
             
-            Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
+            Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref Translation translation, ref UnitComponent unitComponent) =>
             {
-                Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                if (entityCount == 0)
+                //only go harvest if the unit is a peasant
+                if (UnitType.PEASANT == unitComponent.unitType) 
                 {
-                    finalTargetCellPosition.x = targetCellPosition.x;
-                    finalTargetCellPosition.y = targetCellPosition.y +1;
-
-                    EntityManager.AddComponentData(entity, new PathfindingParamsComponent
+                    Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+                    if (entityCount == 0)
                     {
-                        startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                        endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
-                    });
-                    EntityManager.AddBuffer<PathPosition>(entity);
-                    //The units start harvesting and becomes unselected
-                    PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
-                }
-                
-                entityCount++;
+                        finalTargetCellPosition.x = targetCellPosition.x;
+                        finalTargetCellPosition.y = targetCellPosition.y +1;
 
+                        EntityManager.AddComponentData(entity, new PathfindingParamsComponent
+                        {
+                            startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
+                            endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
+                        });
+                        EntityManager.AddBuffer<PathPosition>(entity);
+                        //The units start harvesting and becomes unselected
+                        PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
+                    }
+                    entityCount++;
+                }
             });
         }
         //If the target is an ally : do nothing
