@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI : MonoBehaviour
 {
     public static UI instance;
 
     private GameObject structureOverlay;
+    private GameObject canvas;
 
     private void Awake()
     {
@@ -17,6 +19,7 @@ public class UI : MonoBehaviour
     private void Start()
     {
         structureOverlay = transform.Find("StructureOverlay").gameObject;
+        canvas = transform.Find("GameOverlay").Find("Canvas").gameObject;
     }
 
     // Update is called once per frame
@@ -56,5 +59,23 @@ public class UI : MonoBehaviour
     public void hideStructureOverlay() 
     {
         structureOverlay.SetActive(false);   
+    }
+
+    public void addWood(int amount)
+    {
+        GameObject woodObject = canvas.transform.Find("WoodAmount").gameObject;
+        Text wood = woodObject.GetComponent<Text>();
+        int currentAmount = int.Parse(wood.text);
+        currentAmount += amount;
+        wood.text = "" + currentAmount;
+    }
+
+    public void addGold(int amount)
+    {
+        GameObject goldObject = canvas.transform.Find("GoldAmount").gameObject;
+        Text gold = goldObject.GetComponent<Text>();
+        int currentAmount = int.Parse(gold.text);
+        currentAmount += amount;
+        gold.text = "" + currentAmount;
     }
 }

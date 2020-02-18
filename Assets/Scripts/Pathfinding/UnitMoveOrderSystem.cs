@@ -138,6 +138,10 @@ public class UnitMoveOrderSystem : ComponentSystem
     //Right mouse button down
     private void handleRightMousePressed()
     {
+        GameHandler.instance.selectionAreaTransform.gameObject.SetActive(true);
+        currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        currentMouseCell = GameHandler.instance.tilemap.WorldToCell(currentMousePosition);
+
         //First deselect all the building entities
         Entities.WithAll<StructureSelectedComponent>().ForEach((Entity entity) =>
         {
@@ -148,44 +152,35 @@ public class UnitMoveOrderSystem : ComponentSystem
         Vector3Int targetCellPosition = GameHandler.instance.tilemap.WorldToCell(targetPosition);
         Vector3Int finalTargetCellPosition=Vector3Int.zero;
 
-        //if the target is a ressource, then only one entity will go to harvest it
-        if (IsHarvestable(targetCellPosition))
+        //if the target is a ressource
+        Entities.WithAll<HarvestableComponent>().ForEach((Entity harvestableEntity, ref Translation translation) =>
         {
-            int entityCount = 0;
-            
-            Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity, ref Translation translation, ref UnitComponent unitComponent) =>
+            Vector3Int harvestableCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+            if (harvestableCell.x == currentMouseCell.x && harvestableCell.y == currentMouseCell.y)
             {
-                //only go harvest if the unit is a peasant
-                if (UnitType.PEASANT == unitComponent.unitType) 
+                int entityCount = 0;
+                Entities.WithAll<EntitySelectedComponent>().ForEach((Entity unitEntity, ref UnitComponent unitComponent) =>
                 {
-                    Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                    if (entityCount == 0)
+                    //only go harvest if the unit is a peasant
+                    if (UnitType.PEASANT == unitComponent.unitType && entityCount == 0)
                     {
-                        finalTargetCellPosition.x = targetCellPosition.x;
-                        finalTargetCellPosition.y = targetCellPosition.y +1;
-
-                        EntityManager.AddComponentData(entity, new PathfindingParamsComponent
-                        {
-                            startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                            endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
+                        EntityManager.RemoveComponent<DoHarvestComponent>(unitEntity);
+                        EntityManager.AddComponentData(unitEntity, new DoHarvestComponent {
+                            target = harvestableEntity,
+                            state = DoHarvestComponent.STATE.INIT,
+                            time = 0f
                         });
-                        EntityManager.AddBuffer<PathPosition>(entity);
-                        //The units start harvesting and becomes unselected
-                        PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
+                        entityCount++;
                     }
-                    entityCount++;
-                }
-            });
-        }
-        //If the target is an ally : do nothing
+                });
+            }
+        });
 
-        else if (IsAnAlly(targetCellPosition))
+        if (IsAnAlly(targetCellPosition)) //If the target is an ally : do nothing
         {
             
         }
-
-        //If the target is an enemy
-        else if (IsAnEnemy(targetCellPosition))
+        else if (IsAnEnemy(targetCellPosition)) //If the target is an enemy
         { 
             List<Vector3Int> positionListAround = GetListOfUnits(targetCellPosition);
             List<Vector3Int> positionsAdjaccent = GetListOfAdjacentCells(positionListAround);
@@ -244,12 +239,8 @@ public class UnitMoveOrderSystem : ComponentSystem
                 EntityManager.AddBuffer<PathPosition>(entity);
                 index++;
             });
-
-
         }
-
     }
-
 
     // Return the list of possible cells around the target cell
     private List<Vector3Int> GetPositionListAround(Vector3Int startPosition, int positionCount)

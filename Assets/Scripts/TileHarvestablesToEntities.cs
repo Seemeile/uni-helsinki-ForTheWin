@@ -83,7 +83,8 @@ public class TileHarvestablesToEntities : MonoBehaviour
                 HarvestableType type = HarvestableData.getHarvestableType(tileNo);
                 entityManager.SetComponentData(entity, new HarvestableComponent {
                     type = type,
-                    ressourceAmount = type.Equals(HarvestableType.WOOD) ? 50 : 20000
+                    ressourceAmount = type.Equals(HarvestableType.WOOD) ? 100 : 1000,
+                    harvestTime = type.Equals(HarvestableType.WOOD) ? 4 : 2
                 });
 
                 
