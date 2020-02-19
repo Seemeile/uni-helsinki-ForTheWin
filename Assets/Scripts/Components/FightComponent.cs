@@ -5,5 +5,5 @@ using Unity.Entities;
 
 public struct FightComponent : IComponentData
 {
-   
+    Entity target;
 }

@@ -138,7 +138,7 @@ public class UnitMoveOrderSystem : ComponentSystem
     //Right mouse button down
     private void handleRightMousePressed()
     {
-        GameHandler.instance.selectionAreaTransform.gameObject.SetActive(true);
+        GameHandler.instance.selectionAreaTransform.gameObject.SetActive(false);
         currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currentMouseCell = GameHandler.instance.tilemap.WorldToCell(currentMousePosition);
 
@@ -181,43 +181,93 @@ public class UnitMoveOrderSystem : ComponentSystem
             
         }
         else if (IsAnEnemy(targetCellPosition)) //If the target is an enemy
-        { 
-            List<Vector3Int> positionListAround = GetListOfUnits(targetCellPosition);
-            List<Vector3Int> positionsAdjaccent = GetListOfAdjacentCells(positionListAround);
-            List<Vector3Int> positionsFinal = new List<Vector3Int>();
-            int entityCount = 0;
-            int index = 0;
- 
-            for (int k =0; k < positionsAdjaccent.Count ; k++)
+        {
+            int nbrPositionAdj = 0;
+            int nbrPositionAdjRange = 0;
+            List<Vector3Int> positionListAround = GetListOfUnits(targetCellPosition); //the list of every enemy unit close to the target
+            List<Vector3Int> positionAdjaccent = GetListOfAdjacentCells(positionListAround);// the list of every adjacent cell to these enemies
+            List<Vector3Int> positionAdjaccent_two = GetListOfAdjacentCells(positionAdjaccent); // the list of the first line cells ( for the elfs)
+            List<Vector3Int> positionAdjaccent_three = GetListOfAdjacentCells(positionAdjaccent_two); // the list of the second line cells ( for the elfs)
+            List<Vector3Int> positionFinal = new List<Vector3Int>();
+            int closeRangeCount = 0;
+            int longRangeCount = 0;
+   ;
+
+            // Keep only the free cells
+            for (int k =0; k < positionAdjaccent.Count ; k++)
             {
-                if(ThisCellIsFree(positionsAdjaccent[k]))
+                if (ThisCellIsFree(positionAdjaccent[k]))
                 {
-                    positionsFinal.Add(positionsAdjaccent[k]);
+                    positionFinal.Add(positionAdjaccent[k]);
+                    nbrPositionAdj++;
+                }
+            }
+            for (int k = 0; k < positionAdjaccent_two.Count; k++)
+            {
+                if (ThisCellIsFree(positionAdjaccent_two[k]))
+                {
+                    positionFinal.Add(positionAdjaccent_two[k]);
+                    nbrPositionAdjRange++;
+                }
+            }
+            for (int k = 0; k < positionAdjaccent_three.Count; k++)
+            {
+                if (ThisCellIsFree(positionAdjaccent_three[k]))
+                {
+                    positionFinal.Add(positionAdjaccent_three[k]);
+                    nbrPositionAdjRange++;
                 }
             }
 
-             Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
-             {
-                 if (entityCount < positionsFinal.Count)
-                 {
-                     Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                     finalTargetCellPosition = positionsFinal[index];
-                     EntityManager.AddComponentData(entity, new PathfindingParamsComponent
-                     {
-                         startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                         endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
-                     });
-                     EntityManager.AddBuffer<PathPosition>(entity);
-                     index++;
-                     PostUpdateCommands.AddComponent(entity, new FightComponent());
 
+             Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref UnitComponent unitComponent) =>
+             {
+                 //If the unit is a close range fighter
+                 if (unitComponent.unitType == UnitType.KNIGHT)
+                 {
+
+                     if (closeRangeCount < nbrPositionAdj)
+                     {
+                         Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+                         finalTargetCellPosition = positionFinal[closeRangeCount];
+                         EntityManager.AddComponentData(entity, new PathfindingParamsComponent
+                         {
+                             startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
+                             endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
+                         });
+                         EntityManager.AddBuffer<PathPosition>(entity);
+                         PostUpdateCommands.AddComponent(entity, new FightComponent());
+                         closeRangeCount++;
+
+                     }
                  }
+
+                 //If the unit is a long range fighter
+                 else if (unitComponent.unitType == UnitType.ELF)
+                 {
+
+                     if (longRangeCount < nbrPositionAdj + nbrPositionAdjRange)
+                     {
+                         Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+                         finalTargetCellPosition = positionFinal[longRangeCount + nbrPositionAdj];
+                         EntityManager.AddComponentData(entity, new PathfindingParamsComponent
+                         {
+                             startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
+                             endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
+                         });
+                         EntityManager.AddBuffer<PathPosition>(entity);
+                         PostUpdateCommands.AddComponent(entity, new FightComponent());
+                         longRangeCount++;
+
+                     }
+                 }
+                 
                  //Unselect all the entities who cannot fight
                  else
                  {
                      PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
                  }
-                 entityCount++;
+
              });
         }
         else 
@@ -397,32 +447,82 @@ public class UnitMoveOrderSystem : ComponentSystem
         potentialCells.Add(listEnemy[0]);
         potentialCells.Add(listEnemy[0]);
         potentialCells.Add(listEnemy[0]);
-        potentialCells.Add(listEnemy[0]);
-      
-        
 
         for (int k=0; k<listEnemy.Count;k++)
         {
-            potentialCells[0] = new Vector3Int(listEnemy[k].x - 1, listEnemy[k].y, -20);
-            potentialCells[1] = new Vector3Int(listEnemy[k].x + 1, listEnemy[k].y, -20);
-            potentialCells[2] = new Vector3Int(listEnemy[k].x , listEnemy[k].y - 1, -20);
-            potentialCells[3] = new Vector3Int(listEnemy[k].x , listEnemy[k].y + 1, -20);
+            
+            if (listEnemy[k].x == listExtremum[0])
+            {
+                potentialCells[0] = new Vector3Int(listEnemy[k].x - 1, listEnemy[k].y, -20);
+                potentialCells[1] = new Vector3Int(listEnemy[k].x , listEnemy[k].y + 1, -20);
+                potentialCells[2] = new Vector3Int(listEnemy[k].x, listEnemy[k].y - 1, -20);
+                if(listEnemy.Contains(potentialCells[0]) == false && listPosition.Contains(potentialCells[0]) == false)
+                {
+                    listPosition.Add(potentialCells[0]);
+                }
+                if (listEnemy.Contains(potentialCells[1]) == false && listPosition.Contains(potentialCells[1]) == false)
+                {
+                    listPosition.Add(potentialCells[1]);
+                }
+                if (listEnemy.Contains(potentialCells[2]) == false && listPosition.Contains(potentialCells[2]) == false)
+                {
+                    listPosition.Add(potentialCells[2]);
+                }
 
-            if (listEnemy[k].x == listExtremum[0] && listEnemy.Contains(potentialCells[0]) == false)
-            {
-                listPosition.Add(potentialCells[0]);
             }
-            if (listEnemy[k].x == listExtremum[1] && listEnemy.Contains(potentialCells[1]) == false)
+            if (listEnemy[k].x == listExtremum[1])
             {
-                listPosition.Add(potentialCells[1]);
+                potentialCells[0] = new Vector3Int(listEnemy[k].x + 1, listEnemy[k].y, -20);
+                potentialCells[1] = new Vector3Int(listEnemy[k].x, listEnemy[k].y + 1, -20);
+                potentialCells[2] = new Vector3Int(listEnemy[k].x, listEnemy[k].y - 1, -20);
+                if (listEnemy.Contains(potentialCells[0]) == false && listPosition.Contains(potentialCells[0]) == false)
+                {
+                    listPosition.Add(potentialCells[0]);
+                }
+                if (listEnemy.Contains(potentialCells[1]) == false && listPosition.Contains(potentialCells[1]) == false)
+                {
+                    listPosition.Add(potentialCells[1]);
+                }
+                if (listEnemy.Contains(potentialCells[2]) == false && listPosition.Contains(potentialCells[2]) == false)
+                {
+                    listPosition.Add(potentialCells[2]);
+                }
             }
-            if (listEnemy[k].y == listExtremum[2] && listEnemy.Contains(potentialCells[2]) == false)
+            if (listEnemy[k].y == listExtremum[2] )
             {
-                listPosition.Add(potentialCells[2]);
+                potentialCells[0] = new Vector3Int(listEnemy[k].x , listEnemy[k].y - 1, -20);
+                potentialCells[1] = new Vector3Int(listEnemy[k].x - 1, listEnemy[k].y , -20);
+                potentialCells[2] = new Vector3Int(listEnemy[k].x + 1, listEnemy[k].y, -20);
+                if (listEnemy.Contains(potentialCells[0]) == false && listPosition.Contains(potentialCells[0]) == false)
+                {
+                    listPosition.Add(potentialCells[0]);
+                }
+                if (listEnemy.Contains(potentialCells[1]) == false && listPosition.Contains(potentialCells[1]) == false)
+                {
+                    listPosition.Add(potentialCells[1]);
+                }
+                if (listEnemy.Contains(potentialCells[2]) == false && listPosition.Contains(potentialCells[2]) == false)
+                {
+                    listPosition.Add(potentialCells[2]);
+                }
             }
-            if (listEnemy[k].y == listExtremum[3] && listEnemy.Contains(potentialCells[3]) == false)
+            if (listEnemy[k].y == listExtremum[3])
             {
-                listPosition.Add(potentialCells[3]);
+                potentialCells[0] = new Vector3Int(listEnemy[k].x, listEnemy[k].y + 1, -20);
+                potentialCells[1] = new Vector3Int(listEnemy[k].x - 1, listEnemy[k].y, -20);
+                potentialCells[2] = new Vector3Int(listEnemy[k].x + 1, listEnemy[k].y, -20);
+                if (listEnemy.Contains(potentialCells[0]) == false && listPosition.Contains(potentialCells[0]) == false)
+                {
+                    listPosition.Add(potentialCells[0]);
+                }
+                if (listEnemy.Contains(potentialCells[1]) == false && listPosition.Contains(potentialCells[1]) == false)
+                {
+                    listPosition.Add(potentialCells[1]);
+                }
+                if (listEnemy.Contains(potentialCells[2]) == false && listPosition.Contains(potentialCells[2]) == false)
+                {
+                    listPosition.Add(potentialCells[2]);
+                }
             }
         }
         
@@ -490,4 +590,46 @@ public class UnitMoveOrderSystem : ComponentSystem
         }
         return listExtremum;
     }
+
+    //Return the list of range cells around a target (3 cells range)
+
+    private List<Vector3Int> GetListOfRangeCells(List<Vector3Int> listEnemy)
+    {
+        List<Vector3Int> listPosition = new List<Vector3Int>();
+        List<int> listExtremum = GetListOfExtremum(listEnemy);
+        List<Vector3Int> potentialCells = new List<Vector3Int>();
+
+        potentialCells.Add(listEnemy[0]);
+        potentialCells.Add(listEnemy[0]);
+        potentialCells.Add(listEnemy[0]);
+        potentialCells.Add(listEnemy[0]);
+
+        for (int k = 0; k < listEnemy.Count; k++)
+        {
+            potentialCells[0] = new Vector3Int(listEnemy[k].x - 1, listEnemy[k].y, -20);
+            potentialCells[1] = new Vector3Int(listEnemy[k].x + 1, listEnemy[k].y, -20);
+            potentialCells[2] = new Vector3Int(listEnemy[k].x, listEnemy[k].y - 1, -20);
+            potentialCells[3] = new Vector3Int(listEnemy[k].x, listEnemy[k].y + 1, -20);
+
+            if (listEnemy[k].x == listExtremum[0] && listEnemy.Contains(potentialCells[0]) == false)
+            {
+                listPosition.Add(potentialCells[0]);
+            }
+            if (listEnemy[k].x == listExtremum[1] && listEnemy.Contains(potentialCells[1]) == false)
+            {
+                listPosition.Add(potentialCells[1]);
+            }
+            if (listEnemy[k].y == listExtremum[2] && listEnemy.Contains(potentialCells[2]) == false)
+            {
+                listPosition.Add(potentialCells[2]);
+            }
+            if (listEnemy[k].y == listExtremum[3] && listEnemy.Contains(potentialCells[3]) == false)
+            {
+                listPosition.Add(potentialCells[3]);
+            }
+        }
+
+        return listPosition;
+    }
+
 }
