@@ -60,8 +60,9 @@ public class UnitData
             typeof(LocalToWorld),
             typeof(AnimationComponent),
             typeof(TeamComponent),
-            typeof(HealthComponent)
-            //typeof(IsWalkableComponent)
+            typeof(HealthComponent),
+            typeof(FightComponent)
+        //typeof(IsWalkableComponent)
         );
 
         Material mat = new Material(Shader.Find("Unlit/Transparent"));
@@ -138,7 +139,13 @@ public class UnitData
         {
             health = 100
         });
-   
+
+        //Set FightComponent
+        entityManager.SetComponentData(entity, new FightComponent
+        {
+            isFighting = false
+        });
+
     }
 
 
@@ -153,7 +160,8 @@ public class UnitData
             typeof(LocalToWorld),
             typeof(AnimationComponent),
             typeof(TeamComponent),
-            typeof(HealthComponent)
+            typeof(HealthComponent),
+            typeof(FightComponent)
         //typeof(IsWalkableComponent)
         );
 
@@ -237,7 +245,12 @@ public class UnitData
             health = 100
 
         });
-      
+        //Set FightComponent
+        entityManager.SetComponentData(entity, new FightComponent
+        {
+            isFighting = false
+        });
+
     }
 }
 

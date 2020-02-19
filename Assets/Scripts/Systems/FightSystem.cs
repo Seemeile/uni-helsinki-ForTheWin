@@ -14,29 +14,32 @@ public class FightSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
-        Entities.WithAll<TeamComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team, ref UnitComponent unitComponent) =>
+        Entities.WithAll<FightComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team, ref UnitComponent unitComponent, ref FightComponent fightComponent) =>
         {
             if (unitComponent.unitType == UnitType.KNIGHT)
             {
 
                 if (ThereIsAnEnemy(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)))
                 {
-                    PostUpdateCommands.AddComponent(entity, new FightComponent());
+                    fightComponent.isFighting = true;
+                    fightComponent.target = EnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value));
+
                 }
                 else
                 {
-                    PostUpdateCommands.RemoveComponent<FightComponent>(entity);
+                    fightComponent.isFighting = false;
                 }
             }
             else if (unitComponent.unitType == UnitType.ELF)
             {
                 if (ThereIsARangeEnemy(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)))
                 {
-                    PostUpdateCommands.AddComponent(entity, new FightComponent());
+                    fightComponent.isFighting = true;
+                    fightComponent.target = RangeEnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value));
                 }
                 else
                 {
-                    PostUpdateCommands.RemoveComponent<FightComponent>(entity);
+                    fightComponent.isFighting = false;
                 }
             }
         });
@@ -44,23 +47,16 @@ public class FightSystem : ComponentSystem
         time += Time.deltaTime;
         if (time > 1)
         {
-            Entities.WithAll<FightComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref HealthComponent health, ref TeamComponent team, ref UnitComponent unitComponent) =>
+            Entities.WithAll<FightComponent>().ForEach((Entity entity, ref HealthComponent health, ref TeamComponent team, ref FightComponent fightComponent) =>
             {
 
                 if (health.health <= 0)
                 {
                     PostUpdateCommands.DestroyEntity(entity);
                 }
-
-                if (unitComponent.unitType == UnitType.KNIGHT)
+                if (fightComponent.isFighting == true)
                 {
-                    Fight(EnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)));
-                    
-                }
-                else if (unitComponent.unitType == UnitType.ELF)
-                {
-                    Fight(RangeEnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)));
-                    //Debug.Log("range target " + RangeEnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)));
+                    Fight(fightComponent.target);           
                 }
 
             });
@@ -70,10 +66,10 @@ public class FightSystem : ComponentSystem
      
     }
 
-    //return the position of the closest enemy
-    private Vector3Int EnemyTarget(int teamNumber , Vector3Int position)
+    //return the closest enemy entity
+    private Entity EnemyTarget(int teamNumber , Vector3Int position)
     {
-        Vector3Int positionEnemy = new Vector3Int();
+        Entity closestEnemy = new Entity();
         Entities.WithAll<TeamComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
         {
             Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
@@ -81,26 +77,26 @@ public class FightSystem : ComponentSystem
             {
                 if (currentCellPosition.x == position.x - 1 && currentCellPosition.y == position.y)
                 {
-                    positionEnemy = currentCellPosition;
+                    closestEnemy = entity;
                 }
                 else if (currentCellPosition.x == position.x + 1 && currentCellPosition.y == position.y)
                 {
-                    positionEnemy = currentCellPosition;
+                    closestEnemy = entity;
                 }
                 else if (currentCellPosition.x == position.x && currentCellPosition.y == position.y - 1)
                 {
-                    positionEnemy = currentCellPosition;
+                    closestEnemy = entity;
                 }
                 else if (currentCellPosition.x == position.x  && currentCellPosition.y == position.y + 1)
                 {
-                    positionEnemy = currentCellPosition;
+                    closestEnemy = entity;
                 }
 
             }
 
 
         });
-        return positionEnemy;
+        return closestEnemy;
     }
     //Return true if the unit is close to an enenmy unit
     private bool ThereIsAnEnemy(int teamNumber, Vector3Int position)
@@ -142,41 +138,41 @@ public class FightSystem : ComponentSystem
         return isFighting;
     }
 
-    //Return the position of an enemy at range
-        private Vector3Int RangeEnemyTarget(int teamNumber, Vector3Int position)
+    //Return the closest enemy entity at range
+    private Entity RangeEnemyTarget(int teamNumber, Vector3Int position)
     {
-        Vector3Int positionEnemy = new Vector3Int();
+        Entity closestEnemy = new Entity();
+        float norm =3f;
 
         Entities.WithAll<TeamComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
         {
             Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
             if (team.number != teamNumber)
             {
-                if(Norme(currentCellPosition,position)<=3)
+                if(Norme(currentCellPosition,position)<=norm)
                 {
-                    positionEnemy = currentCellPosition;
+                    closestEnemy = entity;
+                    norm = (Norme(currentCellPosition, position));
                 }
             }
 
         });
 
-            return positionEnemy;
+            return closestEnemy;
     }
 
-    private void Fight(Vector3Int enemyPosition)
+    private void Fight(Entity enemyTarget)
     {
-        Entities.WithAll<TeamComponent>().ForEach((Entity entity, ref Translation translation, ref HealthComponent health) =>
+        Entities.WithAll<FightComponent>().ForEach((Entity entity, ref HealthComponent health) =>
         {
-            Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-            if (enemyPosition.x == currentCellPosition.x && enemyPosition.y == currentCellPosition.y)
+            if(entity == enemyTarget)
             {
                 health.health -= 10;
-                Debug.Log(health.health);
             }
-        });
 
-        
+        });
     }
+
     public float Norme(Vector3Int vector_1, Vector3Int vector_2)
     {
         return (math.sqrt((vector_2.x - vector_1.x) * (vector_2.x - vector_1.x) + (vector_2.y - vector_1.y) * (vector_2.y - vector_1.y)));

@@ -5,5 +5,6 @@ using Unity.Entities;
 
 public struct FightComponent : IComponentData
 {
-    Entity target;
+    public Entity target;
+    public bool isFighting;
 }
