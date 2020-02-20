@@ -7,4 +7,5 @@ public struct FightComponent : IComponentData
 {
     public Entity target;
     public bool isFighting;
+    public bool hasToMove;
 }

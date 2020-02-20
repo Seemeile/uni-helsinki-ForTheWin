@@ -143,7 +143,9 @@ public class UnitData
         //Set FightComponent
         entityManager.SetComponentData(entity, new FightComponent
         {
-            isFighting = false
+            isFighting = false,
+            hasToMove = false
+        
         });
 
     }
@@ -248,7 +250,8 @@ public class UnitData
         //Set FightComponent
         entityManager.SetComponentData(entity, new FightComponent
         {
-            isFighting = false
+            isFighting = false,
+            hasToMove =false
         });
 
     }

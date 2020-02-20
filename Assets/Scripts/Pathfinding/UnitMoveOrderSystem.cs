@@ -438,7 +438,7 @@ public class UnitMoveOrderSystem : ComponentSystem
         return ally;
     }
 
-    //Return le list of free adjacent cells around one position
+    //Return le list of free adjacent cells around many positions
     private List<Vector3Int> GetListOfAdjacentCells(List<Vector3Int> listEnemy)
     {
         
