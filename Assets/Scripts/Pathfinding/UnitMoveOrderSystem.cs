@@ -188,7 +188,8 @@ public class UnitMoveOrderSystem : ComponentSystem
             List<Vector3Int> positionAdjaccent = GetListOfAdjacentCells(positionListAround);// the list of every adjacent cell to these enemies
             List<Vector3Int> positionAdjaccent_two = GetListOfAdjacentCells(positionAdjaccent); // the list of the first line cells ( for the elfs)
             List<Vector3Int> positionAdjaccent_three = GetListOfAdjacentCells(positionAdjaccent_two); // the list of the second line cells ( for the elfs)
-            List<Vector3Int> positionFinal = new List<Vector3Int>();
+            List<Vector3Int> positionFinalCloseRange = new List<Vector3Int>();
+            List<Vector3Int> positionFinalLongRange = new List<Vector3Int>();
             int closeRangeCount = 0;
             int longRangeCount = 0;
    ;
@@ -198,7 +199,7 @@ public class UnitMoveOrderSystem : ComponentSystem
             {
                 if (ThisCellIsFree(positionAdjaccent[k]))
                 {
-                    positionFinal.Add(positionAdjaccent[k]);
+                    positionFinalCloseRange.Add(positionAdjaccent[k]);
                     nbrPositionAdj++;
                 }
             }
@@ -206,7 +207,7 @@ public class UnitMoveOrderSystem : ComponentSystem
             {
                 if (ThisCellIsFree(positionAdjaccent_two[k]))
                 {
-                    positionFinal.Add(positionAdjaccent_two[k]);
+                    positionFinalLongRange.Add(positionAdjaccent_two[k]);
                     nbrPositionAdjRange++;
                 }
             }
@@ -214,7 +215,7 @@ public class UnitMoveOrderSystem : ComponentSystem
             {
                 if (ThisCellIsFree(positionAdjaccent_three[k]))
                 {
-                    positionFinal.Add(positionAdjaccent_three[k]);
+                    positionFinalLongRange.Add(positionAdjaccent_three[k]);
                     nbrPositionAdjRange++;
                 }
             }
@@ -229,14 +230,14 @@ public class UnitMoveOrderSystem : ComponentSystem
                      if (closeRangeCount < nbrPositionAdj)
                      {
                          Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                         finalTargetCellPosition = positionFinal[closeRangeCount];
+                         finalTargetCellPosition = positionFinalCloseRange[ClosestPosition(currentCellPosition, positionFinalCloseRange)];
                          EntityManager.AddComponentData(entity, new PathfindingParamsComponent
                          {
                              startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
                              endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
                          });
                          EntityManager.AddBuffer<PathPosition>(entity);
-                         PostUpdateCommands.AddComponent(entity, new FightComponent());
+                         positionFinalCloseRange.Remove(finalTargetCellPosition);
                          closeRangeCount++;
 
                      }
@@ -249,14 +250,14 @@ public class UnitMoveOrderSystem : ComponentSystem
                      if (longRangeCount < nbrPositionAdj + nbrPositionAdjRange)
                      {
                          Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                         finalTargetCellPosition = positionFinal[longRangeCount + nbrPositionAdj];
+                         finalTargetCellPosition = positionFinalLongRange[ClosestPosition(currentCellPosition, positionFinalLongRange)];
                          EntityManager.AddComponentData(entity, new PathfindingParamsComponent
                          {
                              startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
                              endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
                          });
                          EntityManager.AddBuffer<PathPosition>(entity);
-                         PostUpdateCommands.AddComponent(entity, new FightComponent());
+                         positionFinalLongRange.Remove(finalTargetCellPosition);
                          longRangeCount++;
 
                      }
@@ -358,7 +359,7 @@ public class UnitMoveOrderSystem : ComponentSystem
     {
         bool isFree = true;
 
-        Entities.WithAll<BlockableEntityComponent>().ForEach((Entity entity, ref Translation translation) =>
+        Entities.WithAny<BlockableEntityComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
         {
             Vector3Int structurCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
             if (structurCell.x == cell.x && structurCell.y == cell.y)
@@ -630,6 +631,33 @@ public class UnitMoveOrderSystem : ComponentSystem
         }
 
         return listPosition;
+    }
+
+    private float Norme(Vector3Int vector_1, Vector3Int vector_2)
+    {
+        return (math.sqrt((vector_2.x - vector_1.x) * (vector_2.x - vector_1.x) + (vector_2.y - vector_1.y) * (vector_2.y - vector_1.y)));
+    }
+
+    //Return the indice of the closest potiion from a list
+
+    private int ClosestPosition(Vector3Int currentCellPosition, List<Vector3Int> potentialPositions)
+    {
+        int closestPositionIndice = new int();
+        float min = 100f;
+        
+        for (int k=0; k < potentialPositions.Count; k++)
+        {
+            if(Norme(currentCellPosition, potentialPositions[k]) < min)
+            {
+                closestPositionIndice = k;
+                min = Norme(currentCellPosition, potentialPositions[k]);
+
+
+            }
+        }
+
+
+        return closestPositionIndice;
     }
 
 }

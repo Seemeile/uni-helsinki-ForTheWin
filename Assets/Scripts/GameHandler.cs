@@ -55,14 +55,16 @@ public class GameHandler : MonoBehaviour
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 0, -1);
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, -1);
 
-        for (int k =0; k<29; k++)
+        for (int k =0; k<6; k++)
         {
             UnitData.spawnUnit(UnitType.ELF, -4, 1);
         }
-        for (int k = 0; k < 8; k++)
+       
+        for (int k = 0; k < 2; k++)
         {
-            UnitData.spawnUnit(UnitType.KNIGHT, 2, 2);
+            UnitData.spawnUnit(UnitType.KNIGHT, 2, 6);
         }
+        
         
     }
 
