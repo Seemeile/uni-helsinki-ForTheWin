@@ -20,7 +20,12 @@ public class FightSystem : ComponentSystem
     {
         Entities.WithAll<FightComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team, ref UnitComponent unitComponent, ref FightComponent fightComponent) =>
         {  //Detection
-
+            // if overlapping
+            if (team.number == 1 && !ThisCellIsFreeBis(GameHandler.instance.tilemap.WorldToCell(translation.Value)))
+            {
+                fightComponent.hasToMove = true;
+                fightComponent.isFighting = true;
+            }
             if (ThereIsAnEnemy(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)))
             {
                 fightComponent.isFighting = true;
@@ -42,7 +47,7 @@ public class FightSystem : ComponentSystem
             }
             
         });
-
+        
         time += Time.deltaTime;
         if (time > 1)
         {
@@ -57,12 +62,17 @@ public class FightSystem : ComponentSystem
                 }
 
             });
-            for (int k=0; k<listEnemyPositions.Count;k++)
+           /* for (int k = 0; k < listEnemyPositions.Count; k++)
             {
-                Debug.Log("listEnemyPosition " + listEnemyPositions[k]);
-            }
+                Debug.Log("listEnemuPosition " + listEnemyPositions[k]);
+            }*/
+
             // Get the list of every adjacent cell that has to be reached
             listAdjacentCells = GetAdjacentListOfCells(listEnemyPositions);
+           /* for (int k = 0; k < listAdjacentCells.Count; k++)
+            {
+                Debug.Log("listadjacentcells " + listAdjacentCells[k]);
+            }*/
 
             // Get rid of useless cells
             for (int k = 0; k < listAdjacentCells.Count; k++)
@@ -72,6 +82,10 @@ public class FightSystem : ComponentSystem
                     listFinalPositions.Add(listAdjacentCells[k]);
                 }
             }
+            /*for (int k = 0; k < listFinalPositions.Count; k++)
+            {
+                Debug.Log("listfinale " + listFinalPositions[k]);
+            }*/
 
             Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref HealthComponent health, ref TeamComponent team, ref FightComponent fightComponent, ref Translation translation, ref UnitComponent unitComponent) =>
             {
@@ -87,7 +101,7 @@ public class FightSystem : ComponentSystem
                     }
                     else
                     {
-                        if (Norme(GameHandler.instance.tilemap.WorldToCell(translation.Value), Position(fightComponent.target)) <= 1)
+                        if (Norme(GameHandler.instance.tilemap.WorldToCell(translation.Value), Position(fightComponent.target)) <= 1 && (Norme(GameHandler.instance.tilemap.WorldToCell(translation.Value), Position(fightComponent.target)) > 0))
                         {
                             //Then the unit is in range so it does not need to move
                             Fight(fightComponent.target);
@@ -104,6 +118,7 @@ public class FightSystem : ComponentSystem
                             });
                             EntityManager.AddBuffer<PathPosition>(entity);
                             listFinalPositions.Remove(finalTargetCellPosition);
+                            fightComponent.hasToMove = false;
 
                         }
 
@@ -354,6 +369,24 @@ public class FightSystem : ComponentSystem
 
         return isFree;
     }
+
+    // Check if one cell is occupied by an ally unit
+    private bool ThisCellIsFreeBis(Vector3Int cell)
+    {
+        bool isFree = true;
+
+        Entities.WithAny<UnitComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
+        {
+            Vector3Int structurCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+            if (structurCell.x == cell.x && structurCell.y == cell.y && team.number == 0)
+            {
+                isFree = false;
+            }
+        });
+
+        return isFree;
+    }
+
     //Return the indice of the closest potiion from a list
 
     private int ClosestPosition(Vector3Int currentCellPosition, List<Vector3Int> potentialPositions)

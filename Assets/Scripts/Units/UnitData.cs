@@ -8,6 +8,8 @@ using Unity.Transforms;
 
 public class UnitData
 {
+
+
     private static Dictionary<UnitType, string> unitSprites = new Dictionary<UnitType, string> {
         {UnitType.PEASANT, "skelet_idle_anim_f0" },
         {UnitType.KNIGHT, "knight_f_idle_anim_f0" },
@@ -137,7 +139,10 @@ public class UnitData
         // Set unit health
         entityManager.SetComponentData(entity, new HealthComponent
         {
-            health = 100
+            health = 100,
+            unit = entity,
+            bar = false,
+            //healthBar = GameHandler.instance.healthBarGameObject
         });
 
         //Set FightComponent
@@ -244,7 +249,10 @@ public class UnitData
         // Set unit health
         entityManager.SetComponentData(entity, new HealthComponent
         {
-            health = 100
+            health = 100,
+            unit = entity,
+            bar = false,
+            //healthBar = GameHandler.instance.healthBarGameObject
 
         });
         //Set FightComponent

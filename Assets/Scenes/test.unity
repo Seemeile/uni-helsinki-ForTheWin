@@ -16679,6 +16679,8 @@ MonoBehaviour:
   selectionAreaTransform: {fileID: 499341869}
   healthBarGameObject: {fileID: 5457068465068943770, guid: 09967c9ab8a3abf4f832618954f19b8c,
     type: 3}
+  healthBarMaterial: {fileID: 2100000, guid: a276e44d4a57cd047812d964a52356db, type: 2}
+  healthBarMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   unitSelectedCircleMaterial: {fileID: 2100000, guid: e7da103f8cc259f4d807b6c2539797a3,
     type: 2}
   unitSelectedCircleMesh: {fileID: 10210, guid: 0000000000000000e000000000000000,
@@ -17640,7 +17642,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &2046576503
 AudioListener:
   m_ObjectHideFlags: 0

@@ -4,22 +4,20 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-/*
+
+
 public class HealthSystem : ComponentSystem
 {
-
     protected override void OnUpdate()
     {
-        Entities.WithAll<HealthComponent>().ForEach((Entity entity, ref Translation translation, ref HealthComponent healthBar) =>
+
+        Entities.WithAll<HealthComponent>().ForEach((ref Translation translation, ref HealthComponent health) =>
         {
-            GameObject clone = GameHandler.Instantiate(GameHandler.instance.healthBarGameObject, translation.Value, Quaternion.identity);
-            GameObject.Destroy(clone, Time.deltaTime);
-           
-
+            if (!health.bar)
+            {
+                //GameObject.Instantiate(health.healthBar, translation.Value, Quaternion.identity);
+                health.bar = true;
+            }
         });
-
-       
     }
-    
 }
-*/
