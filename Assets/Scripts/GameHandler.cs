@@ -66,8 +66,7 @@ public class GameHandler : MonoBehaviour
         {
             UnitData.spawnUnit(UnitType.KNIGHT, 2, 6);
         }
-        
-        
+           
     }
 
   
