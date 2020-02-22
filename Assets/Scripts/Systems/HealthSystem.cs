@@ -35,22 +35,18 @@ public class HealthSystem : ComponentSystem
     // to get to position of an entity
     private float3 Position(Entity unit)
     {
-        float3 position = new float3();
         float3 potentialPosition = new float3();
         Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
         {
-            Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+            float3 currentPosition = translation.Value;
             if (entity == unit)
             {
                 potentialPosition = translation.Value;
-                potentialPosition.x = currentCellPosition.x +0.5f;
-                potentialPosition.y = currentCellPosition.y + 0.7f;
-                potentialPosition.z = currentCellPosition.z;
+                potentialPosition.x = currentPosition.x;
+                potentialPosition.y = currentPosition.y + 0.3f;
+                potentialPosition.z = currentPosition.z;
             }
-
         });
-
-
         return potentialPosition;
     }
 

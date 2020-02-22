@@ -317,7 +317,7 @@ public class UnitData
         Entity entity = entityManager.CreateEntity(entityArchetype);
 
         // Set unit translation
-        float3 spawnPos = new float3(gridPosX + 0.5f, gridPosY + 0.5f/* + (halfHeight / 2)*/, -1);
+        float3 spawnPos = new float3(gridPosX + 0.5f, gridPosY + 0.5f/* + (halfHeight / 2)*/, -2);
         entityManager.SetComponentData(entity, new Translation { Value = spawnPos });
         entityManager.SetSharedComponentData(entity, new RenderMesh
         {
