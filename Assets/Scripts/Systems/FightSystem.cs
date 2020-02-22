@@ -92,6 +92,7 @@ public class FightSystem : ComponentSystem
                 if (health.health <= 0)
                 {
                     PostUpdateCommands.DestroyEntity(entity);
+                    PostUpdateCommands.DestroyEntity(health.healthBar);
                 }
                 if (fightComponent.isFighting == true)
                 {
@@ -108,17 +109,20 @@ public class FightSystem : ComponentSystem
                         }
                         else
                         {
-                            // The unit has to move to get in range
-                            Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                            Vector3Int finalTargetCellPosition = listFinalPositions[ClosestPosition(currentCellPosition, listFinalPositions)];
-                            EntityManager.AddComponentData(entity, new PathfindingParamsComponent
+                            if (listFinalPositions.Count > 0)
                             {
-                                startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                                endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
-                            });
-                            EntityManager.AddBuffer<PathPosition>(entity);
-                            listFinalPositions.Remove(finalTargetCellPosition);
-                            fightComponent.hasToMove = false;
+                                // The unit has to move to get in range
+                                Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+                                Vector3Int finalTargetCellPosition = listFinalPositions[ClosestPosition(currentCellPosition, listFinalPositions)];
+                                EntityManager.AddComponentData(entity, new PathfindingParamsComponent
+                                {
+                                    startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
+                                    endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
+                                });
+                                EntityManager.AddBuffer<PathPosition>(entity);
+                                listFinalPositions.Remove(finalTargetCellPosition);
+                                fightComponent.hasToMove = false;
+                            }
 
                         }
 
@@ -228,7 +232,7 @@ public class FightSystem : ComponentSystem
             return closestEnemy;
     }
 
-    // REturn the translation value of the cloest enemy entity
+    // REturn the translation value of the closest enemy entity
 
     private Vector3Int GetPositionRangeEnemyTarget(int teamNumber, Vector3Int position)
     {

@@ -7,4 +7,5 @@ public struct HealthComponent : IComponentData
 {
     public float health;
     public bool bar;
+    public Entity healthBar;
 }

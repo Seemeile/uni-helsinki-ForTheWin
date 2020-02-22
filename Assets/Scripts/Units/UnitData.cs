@@ -262,7 +262,7 @@ public class UnitData
     }
 
 
-    public static void spawnHealthBar(UnitType unitType, float gridPosX, float gridPosY, Entity unit)
+    public static Entity spawnHealthBar(UnitType unitType, float gridPosX, float gridPosY, Entity unit)
     {
         EntityManager entityManager = World.Active.EntityManager;
 
@@ -270,6 +270,7 @@ public class UnitData
             typeof(Translation),
             typeof(UnitComponent),
             typeof(RenderMesh),
+            typeof(RenderBounds),
             typeof(LocalToWorld),
             typeof(HealthBarComponent)
         );
@@ -337,7 +338,7 @@ public class UnitData
             soldier = unit
         });
 
-
+        return entity;
     }
 }
 
