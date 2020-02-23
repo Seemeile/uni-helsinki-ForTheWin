@@ -18,7 +18,7 @@ public class FightSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
-        Entities.WithAll<FightComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team, ref UnitComponent unitComponent, ref FightComponent fightComponent) =>
+        Entities.ForEach((ref Translation translation, ref TeamComponent team, ref UnitComponent unitComponent, ref FightComponent fightComponent, ref AnimationComponent animationComponent) =>
         {  //Detection
             // if overlapping
             if (team.number == 1 && !ThisCellIsFreeBis(GameHandler.instance.tilemap.WorldToCell(translation.Value)))
@@ -45,7 +45,27 @@ public class FightSystem : ComponentSystem
             {
                 fightComponent.isFighting = false;
             }
-            
+
+            if (fightComponent.isFighting) 
+            {
+                if (UnitAnimation.FIGHT != animationComponent.animationType) {
+                    animationComponent.animationType = UnitAnimation.FIGHT;
+                    animationComponent.currentFrame = 0;
+                    animationComponent.frameCount = UnitData.getUnitAnimationCount(unitComponent.unitType, UnitAnimation.FIGHT);
+                    animationComponent.frameTimer = 0f;
+                    animationComponent.frameTimerMax = 0.1f;
+                }
+            }
+            else if (!fightComponent.isFighting)
+            {
+                if (UnitAnimation.FIGHT == animationComponent.animationType) {
+                    animationComponent.animationType = UnitAnimation.IDLE;
+                    animationComponent.currentFrame = 0;
+                    animationComponent.frameCount = UnitData.getUnitAnimationCount(unitComponent.unitType, UnitAnimation.IDLE);
+                    animationComponent.frameTimer = 0f;
+                    animationComponent.frameTimerMax = 0.30f;
+                }
+            }
         });
         
         time += Time.deltaTime;

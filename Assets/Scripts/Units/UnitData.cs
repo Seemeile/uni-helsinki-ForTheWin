@@ -29,10 +29,18 @@ public class UnitData
         {UnitType.ELF, new string[]{ "elf_f_run_anim_f0", "elf_f_run_anim_f1", "elf_f_run_anim_f2", "elf_f_run_anim_f3"} },
     };
 
+    private static Dictionary<UnitType, string[]> fightAnimations = new Dictionary<UnitType, string[]> {
+        {UnitType.PEASANT, new string[]{ "skelet_idle_anim_f3", "skelet_run_anim_f0", "skelet_run_anim_f1", "skelet_run_anim_f0", "skelet_idle_anim_f3"} },
+        {UnitType.KNIGHT, new string[]{ "knight_f_idle_anim_f3", "knight_f_run_anim_f0", "knight_f_run_anim_f1", "knight_f_hit_anim_f0", "knight_f_run_anim_f1", "knight_f_run_anim_f0", "knight_f_idle_anim_f3"} },
+        {UnitType.ELF, new string[]{ "elf_f_idle_anim_f1", "elf_f_idle_anim_f0", "elf_f_hit_anim_f0", "elf_f_idle_anim_f0", "elf_f_idle_anim_f1"} },
+    };
+
     public static string getUnitAnimation(UnitType unitType, UnitAnimation unitAnimation, int animationIndex)
     {
         if (UnitAnimation.RUN == unitAnimation) {
             return runAnimations[unitType][animationIndex];
+        } else if (UnitAnimation.FIGHT == unitAnimation) {
+            return fightAnimations[unitType][animationIndex];
         } else {
             return idleAnimations[unitType][animationIndex];
         }
@@ -42,6 +50,8 @@ public class UnitData
     {
         if (UnitAnimation.RUN == unitAnimation) {
             return runAnimations[unitType].Length;
+        } else if (UnitAnimation.FIGHT == unitAnimation) {
+            return fightAnimations[unitType].Length;
         } else {
             return idleAnimations[unitType].Length;
         }
