@@ -36,7 +36,6 @@ public class GameHandler : MonoBehaviour
     [HideInInspector]
     public int[] tilemapCellBoundsY;
 
-    private EntityManager entityManager;
 
     private void Awake()
     {
@@ -49,25 +48,10 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
-        //UnitData.spawnUnit(UnitType.KNIGHT, 0, 0);
-        UnitData.spawnUnit(UnitType.WIZARD, 0, 0);
-        
-        //UnitData.spawnEnemyUnit(UnitType.PEASANT, -4, 1);
-        /*
-        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, 0);
-        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 0, -1);
-        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, -1);
-
-        for (int k =0; k<1; k++)
+        if (!SettingScript.isSaved)
         {
-            UnitData.spawnUnit(UnitType.ELF, -4, 1);
+            UnitData.spawnUnit(UnitType.WIZARD, 0, 0);
         }
-       
-        for (int k = 0; k < 2; k++)
-        {
-            UnitData.spawnUnit(UnitType.KNIGHT, 2, 6);
-        }
-        */  
     }
 
   

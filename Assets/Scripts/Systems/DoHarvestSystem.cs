@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine.SceneManagement;
 
 public class DoHarvestSystem : ComponentSystem
 {
@@ -14,9 +15,9 @@ public class DoHarvestSystem : ComponentSystem
             ref DoHarvestComponent doHarvestComponent, 
             ref AnimationComponent animationComponent,
             ref UnitComponent unitComponent) => 
+        if (SceneManager.GetActiveScene().name == "test")
         {
-            Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-            switch(doHarvestComponent.state) 
+            Entities.ForEach((Entity unitEntity, ref Translation translation, ref DoHarvestComponent doHarvestComponent) =>
             {
                 case DoHarvestComponent.STATE.INIT:
                     Translation harvestableTranslation = EntityManager.GetComponentData<Translation>(doHarvestComponent.target);
@@ -65,46 +66,89 @@ public class DoHarvestSystem : ComponentSystem
                         Translation hqTranslation = EntityManager.GetComponentData<Translation>(hq);
                         Vector3Int hqCellPosition = GameHandler.instance.tilemap.WorldToCell(hqTranslation.Value);
                         Vector3Int hqFreeSpaceAround = getFreeNeighborSpace(hqCellPosition);
+                Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+                switch (doHarvestComponent.state)
+                {
+                    case DoHarvestComponent.STATE.INIT:
+                        Translation harvestableTranslation = EntityManager.GetComponentData<Translation>(doHarvestComponent.target);
+                        Vector3Int targetCellPosition = GameHandler.instance.tilemap.WorldToCell(harvestableTranslation.Value);
+                        Vector3Int freeSpaceAround = getFreeNeighborSpace(targetCellPosition);
 
                         PostUpdateCommands.RemoveComponent<PathfindingParamsComponent>(unitEntity);
                         PostUpdateCommands.AddComponent(unitEntity, new PathfindingParamsComponent
                         {
                             startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                            endPosition = new int2(hqFreeSpaceAround.x, hqFreeSpaceAround.y)
-                        });                    
-                        EntityManager.AddBuffer<PathPosition>(unitEntity);
-
-                        doHarvestComponent.hq = hq;
-                        doHarvestComponent.hqCell = hqFreeSpaceAround;
-                        doHarvestComponent.carryType = harvestableData.type;
-                        doHarvestComponent.carryAmount = 50; // TODO: dynamic
-                        EntityManager.SetComponentData(doHarvestComponent.target, new HarvestableComponent {
-                            type = harvestableData.type,
-                            harvestTime = harvestableData.harvestTime,
-                            ressourceAmount = harvestableData.ressourceAmount -= 50 // TODO: dynamic
+                            endPosition = new int2(freeSpaceAround.x, freeSpaceAround.y)
                         });
-                        doHarvestComponent.state = DoHarvestComponent.STATE.RETURN;
-                    }
-                    break;
-                case DoHarvestComponent.STATE.RETURN:
-                    if (currentCellPosition.x.Equals(doHarvestComponent.hqCell.x) 
-                        && currentCellPosition.y.Equals(doHarvestComponent.hqCell.y)) 
-                    {
-                        if (HarvestableType.GOLDMINE.Equals(doHarvestComponent.carryType))
+                        EntityManager.AddBuffer<PathPosition>(unitEntity);
+                        doHarvestComponent.targetCell = freeSpaceAround;
+                        doHarvestComponent.state = DoHarvestComponent.STATE.GO;
+                        break;
+                    case DoHarvestComponent.STATE.GO:
+                        if (currentCellPosition.x.Equals(doHarvestComponent.targetCell.x)
+                            && currentCellPosition.y.Equals(doHarvestComponent.targetCell.y))
                         {
-                            UI.instance.addGold(doHarvestComponent.carryAmount);
-                        } 
-                        else if (HarvestableType.WOOD.Equals(doHarvestComponent.carryType))
-                        {
-                            UI.instance.addWood(doHarvestComponent.carryAmount);
+                            doHarvestComponent.state = DoHarvestComponent.STATE.HARVEST;
                         }
-                        PostUpdateCommands.RemoveComponent<DoHarvestComponent>(unitEntity);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
+                        break;
+                    case DoHarvestComponent.STATE.HARVEST:
+                        doHarvestComponent.time += Time.deltaTime;
+                        HarvestableComponent harvestableData = EntityManager.GetComponentData<HarvestableComponent>(doHarvestComponent.target);
+                        if (doHarvestComponent.time >= harvestableData.harvestTime)
+                        {
+                            Entity hq = doHarvestComponent.target;
+                            Entities.ForEach((Entity hqEntity, ref StructureComponent structureComponent) =>
+                            {
+                                if (BuildingType.HQ.Equals(structureComponent.type))
+                                {
+                                    hq = hqEntity;
+                                }
+                            });
+                            Translation hqTranslation = EntityManager.GetComponentData<Translation>(hq);
+                            Vector3Int hqCellPosition = GameHandler.instance.tilemap.WorldToCell(hqTranslation.Value);
+                            Vector3Int hqFreeSpaceAround = getFreeNeighborSpace(hqCellPosition);
+
+                            PostUpdateCommands.RemoveComponent<PathfindingParamsComponent>(unitEntity);
+                            PostUpdateCommands.AddComponent(unitEntity, new PathfindingParamsComponent
+                            {
+                                startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
+                                endPosition = new int2(hqFreeSpaceAround.x, hqFreeSpaceAround.y)
+                            });
+                            EntityManager.AddBuffer<PathPosition>(unitEntity);
+
+                            doHarvestComponent.hq = hq;
+                            doHarvestComponent.hqCell = hqFreeSpaceAround;
+                            doHarvestComponent.carryType = harvestableData.type;
+                            doHarvestComponent.carryAmount = 50; // TODO: dynamic
+                        EntityManager.SetComponentData(doHarvestComponent.target, new HarvestableComponent
+                            {
+                                type = harvestableData.type,
+                                harvestTime = harvestableData.harvestTime,
+                                ressourceAmount = harvestableData.ressourceAmount -= 50 // TODO: dynamic
+                        });
+                            doHarvestComponent.state = DoHarvestComponent.STATE.RETURN;
+                        }
+                        break;
+                    case DoHarvestComponent.STATE.RETURN:
+                        if (currentCellPosition.x.Equals(doHarvestComponent.hqCell.x)
+                            && currentCellPosition.y.Equals(doHarvestComponent.hqCell.y))
+                        {
+                            if (HarvestableType.GOLDMINE.Equals(doHarvestComponent.carryType))
+                            {
+                                UI.instance.addGold(doHarvestComponent.carryAmount);
+                            }
+                            else if (HarvestableType.WOOD.Equals(doHarvestComponent.carryType))
+                            {
+                                UI.instance.addWood(doHarvestComponent.carryAmount);
+                            }
+                            PostUpdateCommands.RemoveComponent<DoHarvestComponent>(unitEntity);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
     }
 
     private Vector3Int getFreeNeighborSpace(Vector3Int targetCellPosition)

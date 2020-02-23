@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Rendering;
 using System;
+using UnityEngine.SceneManagement;
 
 
 public class FightSystem : ComponentSystem
@@ -18,7 +19,9 @@ public class FightSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
-        Entities.ForEach((ref Translation translation, ref TeamComponent team, ref UnitComponent unitComponent, ref FightComponent fightComponent, ref AnimationComponent animationComponent) =>
+        if (SceneManager.GetActiveScene().name == "test")
+        {
+            Entities.ForEach((ref Translation translation, ref TeamComponent team, ref UnitComponent unitComponent, ref FightComponent fightComponent, ref AnimationComponent animationComponent) =>
         {  //Detection
             // if overlapping
             if (team.number == 1 && !ThisCellIsFreeBis(GameHandler.instance.tilemap.WorldToCell(translation.Value)))
@@ -36,7 +39,7 @@ public class FightSystem : ComponentSystem
             {
                 fightComponent.isFighting = true;
                 fightComponent.target = RangeEnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value));
-                if(unitComponent.unitType == UnitType.KNIGHT && team.number ==1)
+                if (unitComponent.unitType == UnitType.KNIGHT && team.number == 1)
                 {
                     fightComponent.hasToMove = true;
                 }
@@ -46,9 +49,10 @@ public class FightSystem : ComponentSystem
                 fightComponent.isFighting = false;
             }
 
-            if (fightComponent.isFighting) 
+            if (fightComponent.isFighting)
             {
-                if (UnitAnimation.FIGHT != animationComponent.animationType) {
+                if (UnitAnimation.FIGHT != animationComponent.animationType)
+                {
                     animationComponent.animationType = UnitAnimation.FIGHT;
                     animationComponent.currentFrame = 0;
                     animationComponent.frameCount = UnitData.getUnitAnimationCount(unitComponent.unitType, UnitAnimation.FIGHT);
@@ -58,7 +62,8 @@ public class FightSystem : ComponentSystem
             }
             else if (!fightComponent.isFighting)
             {
-                if (UnitAnimation.FIGHT == animationComponent.animationType) {
+                if (UnitAnimation.FIGHT == animationComponent.animationType)
+                {
                     animationComponent.animationType = UnitAnimation.IDLE;
                     animationComponent.currentFrame = 0;
                     animationComponent.frameCount = UnitData.getUnitAnimationCount(unitComponent.unitType, UnitAnimation.IDLE);
@@ -67,91 +72,92 @@ public class FightSystem : ComponentSystem
                 }
             }
         });
-        
-        time += Time.deltaTime;
-        if (time > 1)
-        {
-            listEnemyPositions.Clear();
-            listFinalPositions.Clear();
-            // Create the list of enemiy positions that have to be reached
-            Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref FightComponent fightComponent) =>
-            { 
-                if(fightComponent.hasToMove == true)
-                {
-                    listEnemyPositions.Add(Position(fightComponent.target));
-                }
 
-            });
-           /* for (int k = 0; k < listEnemyPositions.Count; k++)
+            time += Time.deltaTime;
+            if (time > 1)
             {
-                Debug.Log("listEnemuPosition " + listEnemyPositions[k]);
-            }*/
-
-            // Get the list of every adjacent cell that has to be reached
-            listAdjacentCells = GetAdjacentListOfCells(listEnemyPositions);
-           /* for (int k = 0; k < listAdjacentCells.Count; k++)
-            {
-                Debug.Log("listadjacentcells " + listAdjacentCells[k]);
-            }*/
-
-            // Get rid of useless cells
-            for (int k = 0; k < listAdjacentCells.Count; k++)
-            {
-                if (ThisCellIsFree(listAdjacentCells[k]))
+                listEnemyPositions.Clear();
+                listFinalPositions.Clear();
+                // Create the list of enemiy positions that have to be reached
+                Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref FightComponent fightComponent) =>
                 {
-                    listFinalPositions.Add(listAdjacentCells[k]);
-                }
-            }
-            /*for (int k = 0; k < listFinalPositions.Count; k++)
-            {
-                Debug.Log("listfinale " + listFinalPositions[k]);
-            }*/
-
-            Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref HealthComponent health, ref TeamComponent team, ref FightComponent fightComponent, ref Translation translation, ref UnitComponent unitComponent) =>
-            {
-                if (health.health <= 0)
-                {
-                    PostUpdateCommands.DestroyEntity(entity);
-                    PostUpdateCommands.DestroyEntity(health.healthBar);
-                }
-                if (fightComponent.isFighting == true)
-                {
-                    if (fightComponent.hasToMove == false)
+                    if (fightComponent.hasToMove == true)
                     {
-                        Fight(fightComponent.target);
+                        listEnemyPositions.Add(Position(fightComponent.target));
                     }
-                    else
+
+                });
+                /* for (int k = 0; k < listEnemyPositions.Count; k++)
+                 {
+                     Debug.Log("listEnemuPosition " + listEnemyPositions[k]);
+                 }*/
+
+                // Get the list of every adjacent cell that has to be reached
+                listAdjacentCells = GetAdjacentListOfCells(listEnemyPositions);
+                /* for (int k = 0; k < listAdjacentCells.Count; k++)
+                 {
+                     Debug.Log("listadjacentcells " + listAdjacentCells[k]);
+                 }*/
+
+                // Get rid of useless cells
+                for (int k = 0; k < listAdjacentCells.Count; k++)
+                {
+                    if (ThisCellIsFree(listAdjacentCells[k]))
                     {
-                        if (Norme(GameHandler.instance.tilemap.WorldToCell(translation.Value), Position(fightComponent.target)) <= 1 && (Norme(GameHandler.instance.tilemap.WorldToCell(translation.Value), Position(fightComponent.target)) > 0))
+                        listFinalPositions.Add(listAdjacentCells[k]);
+                    }
+                }
+                /*for (int k = 0; k < listFinalPositions.Count; k++)
+                {
+                    Debug.Log("listfinale " + listFinalPositions[k]);
+                }*/
+
+                Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref HealthComponent health, ref TeamComponent team, ref FightComponent fightComponent, ref Translation translation, ref UnitComponent unitComponent) =>
+                {
+                    if (health.health <= 0)
+                    {
+                        PostUpdateCommands.DestroyEntity(entity);
+                        PostUpdateCommands.DestroyEntity(health.healthBar);
+                    }
+                    if (fightComponent.isFighting == true)
+                    {
+                        if (fightComponent.hasToMove == false)
                         {
-                            //Then the unit is in range so it does not need to move
                             Fight(fightComponent.target);
                         }
                         else
                         {
-                            if (listFinalPositions.Count > 0)
+                            if (Norme(GameHandler.instance.tilemap.WorldToCell(translation.Value), Position(fightComponent.target)) <= 1 && (Norme(GameHandler.instance.tilemap.WorldToCell(translation.Value), Position(fightComponent.target)) > 0))
                             {
+                            //Then the unit is in range so it does not need to move
+                            Fight(fightComponent.target);
+                            }
+                            else
+                            {
+                                if (listFinalPositions.Count > 0)
+                                {
                                 // The unit has to move to get in range
                                 Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                                Vector3Int finalTargetCellPosition = listFinalPositions[ClosestPosition(currentCellPosition, listFinalPositions)];
-                                EntityManager.AddComponentData(entity, new PathfindingParamsComponent
-                                {
-                                    startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                                    endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
-                                });
-                                EntityManager.AddBuffer<PathPosition>(entity);
-                                listFinalPositions.Remove(finalTargetCellPosition);
-                                fightComponent.hasToMove = false;
+                                    Vector3Int finalTargetCellPosition = listFinalPositions[ClosestPosition(currentCellPosition, listFinalPositions)];
+                                    EntityManager.AddComponentData(entity, new PathfindingParamsComponent
+                                    {
+                                        startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
+                                        endPosition = new int2(finalTargetCellPosition.x, finalTargetCellPosition.y)
+                                    });
+                                    EntityManager.AddBuffer<PathPosition>(entity);
+                                    listFinalPositions.Remove(finalTargetCellPosition);
+                                    fightComponent.hasToMove = false;
+                                }
+
                             }
 
                         }
-
                     }
-                }
 
-            });
+                });
 
-            time = 0;
+                time = 0;
+            }
         }
      
     }
