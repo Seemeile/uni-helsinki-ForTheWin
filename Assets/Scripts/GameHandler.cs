@@ -48,23 +48,10 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
-<<<<<<< HEAD
-=======
-        //UnitData.spawnUnit(UnitType.KNIGHT, 0, 0);
-        UnitData.spawnUnit(UnitType.WIZARD, 0, 0);
-        
-        //UnitData.spawnEnemyUnit(UnitType.PEASANT, -4, 1);
-        /*
-        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, 0);
-        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 0, -1);
-        UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, -1);
-
-        for (int k =0; k<1; k++)
+        if (!SettingScript.isSaved)
         {
-            UnitData.spawnUnit(UnitType.ELF, -4, 1);
+            UnitData.spawnUnit(UnitType.WIZARD, 0, 0);
         }
->>>>>>> f75028843656b92421cc3506ba1947853fc21d5f
-       
     }
 
   

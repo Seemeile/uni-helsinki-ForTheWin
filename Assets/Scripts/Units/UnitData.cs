@@ -18,12 +18,10 @@ public class UnitData
         {UnitType.HEALTHBAR, "healthBarSprite"},
     };
 
-<<<<<<< HEAD
-    public static Dictionary<UnitType, string[]> idleAnimations = new Dictionary<UnitType, string[]> {
-=======
+
+
     private static Dictionary<UnitType, string[]> idleAnimations = new Dictionary<UnitType, string[]> {
         {UnitType.WIZARD, new string[]{ "wizzard_m_idle_anim_f0", "wizzard_m_idle_anim_f1", "wizzard_m_idle_anim_f2", "wizzard_m_idle_anim_f3"} },
->>>>>>> f75028843656b92421cc3506ba1947853fc21d5f
         {UnitType.PEASANT, new string[]{ "skelet_idle_anim_f0", "skelet_idle_anim_f1", "skelet_idle_anim_f2", "skelet_idle_anim_f3"} },
         {UnitType.KNIGHT, new string[]{ "knight_f_idle_anim_f0", "knight_f_idle_anim_f1", "knight_f_idle_anim_f2", "knight_f_idle_anim_f3"} },
         {UnitType.ELF, new string[]{ "elf_f_idle_anim_f0", "elf_f_idle_anim_f1", "elf_f_idle_anim_f2", "elf_f_idle_anim_f3"} },

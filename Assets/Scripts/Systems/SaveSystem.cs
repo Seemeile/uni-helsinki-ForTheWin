@@ -15,20 +15,20 @@ public class SaveSystem : ComponentSystem
     public static List<Entity> listOfHarvestable = new List<Entity>();
 
     protected override void OnUpdate()
-    {/*
-        if (SceneManager.GetActiveScene().name == "test")
+    {
+        /*if (SceneManager.GetActiveScene().name == "test")
         {
             if (SettingScript.isSaved)
             {
-                Entities.WithAll<UnitComponent>().ForEach((Entity entity) =>
+                Entities.WithAll<HarvestableComponent>().ForEach((Entity entity) =>
                 {
-                    if (!listOfUnit.Contains(entity))
+                    if (!listOfHarvestable.Contains(entity))
                     {
-                        listOfUnit.Add(entity);
+                        DestroyHarvestable(entity);
                     }
                 });
             }
-        }
+        }*/
     }
 
     public void DestroyHarvestable(Entity harvestable)
@@ -39,7 +39,7 @@ public class SaveSystem : ComponentSystem
             {
                 PostUpdateCommands.DestroyEntity(entity);
             }
-        });*/
+        });
     }
 }
 

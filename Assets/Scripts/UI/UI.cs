@@ -31,6 +31,7 @@ public class UI : MonoBehaviour
     public void showUnitActions(UnitType unitType)
     {
         // set icon to building sprite
+
         GameObject icon = actionsOverlay.transform.Find("SelectionIcon").gameObject;
         SpriteRenderer iconRenderer = icon.GetComponent<SpriteRenderer>();
         string spriteName = UnitData.getUnitSprite(unitType);

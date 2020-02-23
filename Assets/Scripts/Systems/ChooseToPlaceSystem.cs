@@ -4,43 +4,51 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine.SceneManagement;
 
 public class ChooseToPlaceSystem : ComponentSystem
 {
     protected override void OnUpdate() 
     {
-        bool leftMouseClicked = false;
-        bool rightMouseClicked = false;
-        if (Input.GetMouseButtonDown(0)) {
-            leftMouseClicked = true;
-        } else if (Input.GetMouseButtonDown(1)) {
-            rightMouseClicked = true;
-        }
-
-        EntityManager entityManager = World.Active.EntityManager;
-        float3 currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int currentMouseCell = GameHandler.instance.tilemap.WorldToCell(currentMousePosition);
-
-        Entities.ForEach((Entity chooseEntity, ref ChooseToPlaceComponent chooseToPlaceComponent) => {
-            BuildingType buildingType = chooseToPlaceComponent.buildingType;
-            
-            Material mat = new Material(Shader.Find("Unlit/Transparent"));
-            int tileNo = BuildingData.getTileNumber(buildingType);
-            Sprite buildingSprite = Resources.Load<Sprite>("Sprites/TileSprites/tileset16x16_1_" + tileNo);
-            mat.mainTexture = buildingSprite.texture;
-
-            currentMouseCell.z = -10;
-            Graphics.DrawMesh(getSimpleQuadMesh(), currentMouseCell, Quaternion.identity, mat, 0);
-
-            if (leftMouseClicked)
+        if (SceneManager.GetActiveScene().name == "test")
+        {
+            bool leftMouseClicked = false;
+            bool rightMouseClicked = false;
+            if (Input.GetMouseButtonDown(0))
             {
-                placeBuildingWhenPossible(chooseEntity, buildingType, currentMouseCell);
-            } 
-            else if (rightMouseClicked)
-            {
-                entityManager.DestroyEntity(chooseEntity);
+                leftMouseClicked = true;
             }
-        });
+            else if (Input.GetMouseButtonDown(1))
+            {
+                rightMouseClicked = true;
+            }
+
+            EntityManager entityManager = World.Active.EntityManager;
+            float3 currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3Int currentMouseCell = GameHandler.instance.tilemap.WorldToCell(currentMousePosition);
+
+            Entities.ForEach((Entity chooseEntity, ref ChooseToPlaceComponent chooseToPlaceComponent) =>
+            {
+                BuildingType buildingType = chooseToPlaceComponent.buildingType;
+
+                Material mat = new Material(Shader.Find("Unlit/Transparent"));
+                int tileNo = BuildingData.getTileNumber(buildingType);
+                Sprite buildingSprite = Resources.Load<Sprite>("Sprites/TileSprites/tileset16x16_1_" + tileNo);
+                mat.mainTexture = buildingSprite.texture;
+
+                currentMouseCell.z = -10;
+                Graphics.DrawMesh(getSimpleQuadMesh(), currentMouseCell, Quaternion.identity, mat, 0);
+
+                if (leftMouseClicked)
+                {
+                    placeBuildingWhenPossible(chooseEntity, buildingType, currentMouseCell);
+                }
+                else if (rightMouseClicked)
+                {
+                    entityManager.DestroyEntity(chooseEntity);
+                }
+            });
+        }
     }
 
     private void placeBuildingWhenPossible(Entity chooseEntity, BuildingType buildingType, Vector3Int currentMouseCell)
