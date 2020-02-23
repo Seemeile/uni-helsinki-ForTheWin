@@ -9,7 +9,11 @@ public class DoHarvestSystem : ComponentSystem
 {
     protected override void OnUpdate()
     {
-        Entities.ForEach((Entity unitEntity, ref Translation translation, ref DoHarvestComponent doHarvestComponent) => 
+        Entities.ForEach((Entity unitEntity, 
+            ref Translation translation, 
+            ref DoHarvestComponent doHarvestComponent, 
+            ref AnimationComponent animationComponent,
+            ref UnitComponent unitComponent) => 
         {
             Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
             switch(doHarvestComponent.state) 
@@ -38,6 +42,15 @@ public class DoHarvestSystem : ComponentSystem
                     break;
                 case DoHarvestComponent.STATE.HARVEST:
                     doHarvestComponent.time += Time.deltaTime;
+                    // change to run animation while harvesting (harvest=fight animation)
+                    if (UnitAnimation.HARVEST != animationComponent.animationType) {
+                        Debug.Log(animationComponent.animationType);
+                        animationComponent.animationType = UnitAnimation.HARVEST;
+                        animationComponent.currentFrame = 0;
+                        animationComponent.frameCount = UnitData.getUnitAnimationCount(unitComponent.unitType, UnitAnimation.FIGHT);
+                        animationComponent.frameTimer = 0f;
+                        animationComponent.frameTimerMax = 0.1f;
+                    }
                     HarvestableComponent harvestableData = EntityManager.GetComponentData<HarvestableComponent>(doHarvestComponent.target);
                     if (doHarvestComponent.time >= harvestableData.harvestTime)
                     {
