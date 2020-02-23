@@ -2,5 +2,5 @@ using System;
 
 public enum UnitAnimation 
 {
-    IDLE, RUN, FIGHT
+    IDLE, RUN, FIGHT, HARVEST
 }

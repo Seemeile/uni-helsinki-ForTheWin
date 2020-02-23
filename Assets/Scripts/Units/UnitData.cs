@@ -70,6 +70,8 @@ public class UnitData
             return runAnimations[unitType][animationIndex];
         } else if (UnitAnimation.FIGHT == unitAnimation) {
             return fightAnimations[unitType][animationIndex];
+        } else if (UnitAnimation.HARVEST == unitAnimation) {
+            return fightAnimations[unitType][animationIndex];
         } else {
             return idleAnimations[unitType][animationIndex];
         }
@@ -80,6 +82,8 @@ public class UnitData
         if (UnitAnimation.RUN == unitAnimation) {
             return runAnimations[unitType].Length;
         } else if (UnitAnimation.FIGHT == unitAnimation) {
+            return fightAnimations[unitType].Length;
+        } else if (UnitAnimation.HARVEST == unitAnimation) {
             return fightAnimations[unitType].Length;
         } else {
             return idleAnimations[unitType].Length;
