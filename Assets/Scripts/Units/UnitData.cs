@@ -72,18 +72,16 @@ public class UnitData
         Sprite tileSprite = Resources.Load<Sprite>("Sprites/Animation/" + getUnitSprite(unitType));
         mat.mainTexture = tileSprite.texture;
         
-        //float ratio = (float) tileSprite.texture.height / (float) tileSprite.texture.width;
+        float ratio = (float) tileSprite.texture.height / (float) tileSprite.texture.width;
         int width = 1;
-        float height = 1;// * ratio;
+        float height = 1 * ratio;
         Mesh mesh = new Mesh();
         // Setup vertices
         Vector3[] newVertices = new Vector3[4];
-        float halfHeight = height * 0.5f;
-        float halfWidth = width * 0.5f;
-        newVertices [0] = new Vector3 (-halfWidth, -halfHeight, 0);
-        newVertices [1] = new Vector3 (-halfWidth, halfHeight, 0);
-        newVertices [2] = new Vector3 (halfWidth, -halfHeight, 0);
-        newVertices [3] = new Vector3 (halfWidth, halfHeight, 0);
+        newVertices [0] = new Vector3 (0, 0, 0);
+        newVertices [1] = new Vector3 (0, height, 0);
+        newVertices [2] = new Vector3 (width, 0, 0);
+        newVertices [3] = new Vector3 (width, height, 0);
         
         // Setup UVs
         Vector2[] newUVs = new Vector2[newVertices.Length];
@@ -110,7 +108,7 @@ public class UnitData
         Entity entity = entityManager.CreateEntity(entityArchetype);
 
         // Set unit translation
-        float3 spawnPos = new float3(gridPosX + 0.5f, gridPosY + 0.5f/* + (halfHeight / 2)*/, -1);
+        float3 spawnPos = new float3(gridPosX, gridPosY, -2);
         entityManager.SetComponentData(entity, new Translation { Value = spawnPos });
         entityManager.SetSharedComponentData(entity, new RenderMesh {
             mesh = mesh,
@@ -149,9 +147,7 @@ public class UnitData
         {
             isFighting = false,
             hasToMove = false
-        
         });
-
     }
 
 
@@ -175,18 +171,16 @@ public class UnitData
         Sprite tileSprite = Resources.Load<Sprite>("Sprites/Animation/" + getUnitSprite(unitType));
         mat.mainTexture = tileSprite.texture;
 
-        //float ratio = (float) tileSprite.texture.height / (float) tileSprite.texture.width;
+        float ratio = (float) tileSprite.texture.height / (float) tileSprite.texture.width;
         int width = 1;
-        float height = 1;// * ratio;
+        float height = 1 * ratio;
         Mesh mesh = new Mesh();
         // Setup vertices
         Vector3[] newVertices = new Vector3[4];
-        float halfHeight = height * 0.5f;
-        float halfWidth = width * 0.5f;
-        newVertices[0] = new Vector3(-halfWidth, -halfHeight, 0);
-        newVertices[1] = new Vector3(-halfWidth, halfHeight, 0);
-        newVertices[2] = new Vector3(halfWidth, -halfHeight, 0);
-        newVertices[3] = new Vector3(halfWidth, halfHeight, 0);
+        newVertices[0] = new Vector3(0, 0, 0);
+        newVertices[1] = new Vector3(0, height, 0);
+        newVertices[2] = new Vector3(width, 0, 0);
+        newVertices[3] = new Vector3(width, height, 0);
 
         // Setup UVs
         Vector2[] newUVs = new Vector2[newVertices.Length];
@@ -214,7 +208,7 @@ public class UnitData
         Entity entity = entityManager.CreateEntity(entityArchetype);
 
         // Set unit translation
-        float3 spawnPos = new float3(gridPosX + 0.5f, gridPosY + 0.5f/* + (halfHeight / 2)*/, -1);
+        float3 spawnPos = new float3(gridPosX, gridPosY, -2);
         entityManager.SetComponentData(entity, new Translation { Value = spawnPos });
         entityManager.SetSharedComponentData(entity, new RenderMesh
         {
@@ -279,18 +273,15 @@ public class UnitData
         Sprite tileSprite = Resources.Load<Sprite>("Sprites/Animation/" + getUnitSprite(unitType));
         mat.mainTexture = tileSprite.texture;
 
-        //float ratio = (float) tileSprite.texture.height / (float) tileSprite.texture.width;
         int width = 1;
-        float height = 1;// * ratio;
+        float height = 1;
         Mesh mesh = new Mesh();
         // Setup vertices
         Vector3[] newVertices = new Vector3[4];
-        float halfHeight = height * 0.5f;
-        float halfWidth = width * 0.5f;
-        newVertices[0] = new Vector3(-halfWidth, -halfHeight, 0);
-        newVertices[1] = new Vector3(-halfWidth, halfHeight, 0);
-        newVertices[2] = new Vector3(halfWidth, -halfHeight, 0);
-        newVertices[3] = new Vector3(halfWidth, halfHeight, 0);
+        newVertices[0] = new Vector3(0, 0, 0);
+        newVertices[1] = new Vector3(0, height, 0);
+        newVertices[2] = new Vector3(width, 0, 0);
+        newVertices[3] = new Vector3(width, height, 0);
 
         // Setup UVs
         Vector2[] newUVs = new Vector2[newVertices.Length];
@@ -318,7 +309,7 @@ public class UnitData
         Entity entity = entityManager.CreateEntity(entityArchetype);
 
         // Set unit translation
-        float3 spawnPos = new float3(gridPosX + 0.5f, gridPosY + 0.5f/* + (halfHeight / 2)*/, -2);
+        float3 spawnPos = new float3(gridPosX, gridPosY, -3);
         entityManager.SetComponentData(entity, new Translation { Value = spawnPos });
         entityManager.SetSharedComponentData(entity, new RenderMesh
         {

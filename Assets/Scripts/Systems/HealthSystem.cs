@@ -19,14 +19,13 @@ public class HealthSystem : ComponentSystem
             if (!health.bar)
             {
                 Vector3Int currentPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                health.healthBar = UnitData.spawnHealthBar(UnitType.HEALTHBAR, currentPosition.x, currentPosition.y + 0.3f, entity);
+                health.healthBar = UnitData.spawnHealthBar(UnitType.HEALTHBAR, currentPosition.x, currentPosition.y, entity);
                 health.bar = true;
             }
         });
 
         Entities.WithAll<HealthBarComponent>().ForEach((Entity entity, ref Translation translation, ref HealthBarComponent healthBar, ref UnitComponent unit) =>
         {
-
             HealthComponent hc = EntityManager.GetComponentData<HealthComponent>(healthBar.soldier);
             float healthValue = hc.health;
 
@@ -41,18 +40,12 @@ public class HealthSystem : ComponentSystem
             Sprite tileSprite = Resources.Load<Sprite>("Sprites/Animation/" + "healthBarSprite");
             mat.mainTexture = tileSprite.texture;
 
-
             entityManager.SetSharedComponentData<RenderMesh>(entity, new RenderMesh
             {
                 mesh = mesh,
                 material = mat
-
             });
-            
-
         });
-
-
     }
 
 
@@ -66,9 +59,11 @@ public class HealthSystem : ComponentSystem
             float3 currentPosition = translation.Value;
             if (entity == unit)
             {
+                RenderMesh unitRenderer = entityManager.GetSharedComponentData<RenderMesh>(entity);
+                float unitMeshHeight = unitRenderer.mesh.vertices[1].y;
                 potentialPosition = translation.Value;
                 potentialPosition.x = currentPosition.x;
-                potentialPosition.y = currentPosition.y + 0.3f;
+                potentialPosition.y = currentPosition.y + unitMeshHeight;
                 potentialPosition.z = currentPosition.z;
             }
         });
@@ -78,17 +73,12 @@ public class HealthSystem : ComponentSystem
     private Mesh CreateNewQuad(float health)
     {
         var mesh = new Mesh();
-        int width = 1;
-        float height = 1;
+        float height = 0.1f;
         Vector3[] newVertices = new Vector3[4];
-        float halfHeight = height * 0.5f;
-        float halfWidth = width * 0.5f;
-       
-
-        newVertices[0] = new Vector3(-halfWidth, -halfHeight, 0);
-        newVertices[1] = new Vector3(-halfWidth, halfHeight, 0);
-        newVertices[2] = new Vector3(-halfWidth+(health / 100), -halfHeight, 0);
-        newVertices[3] = new Vector3(-halfWidth+(health / 100), halfHeight, 0);
+        newVertices[0] = new Vector3(0, 0, 0);
+        newVertices[1] = new Vector3(0, height, 0);
+        newVertices[2] = new Vector3(health / 100, 0, 0);
+        newVertices[3] = new Vector3(health / 100, height, 0);
 
         // Setup UVs
         Vector2[] newUVs = new Vector2[newVertices.Length];

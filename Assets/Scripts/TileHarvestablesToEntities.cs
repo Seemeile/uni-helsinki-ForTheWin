@@ -39,12 +39,10 @@ public class TileHarvestablesToEntities : MonoBehaviour
                 Mesh tileMesh = new Mesh();
                 // Setup vertices
                 Vector3[] newVertices = new Vector3[4];
-                float halfHeight = height * 0.5f;
-                float halfWidth = width * 0.5f;
-                newVertices [0] = new Vector3 (-halfWidth, -halfHeight, 0);
-                newVertices [1] = new Vector3 (-halfWidth, halfHeight, 0);
-                newVertices [2] = new Vector3 (halfWidth, -halfHeight, 0);
-                newVertices [3] = new Vector3 (halfWidth, halfHeight, 0);
+                newVertices [0] = new Vector3 (0, 0, 0);
+                newVertices [1] = new Vector3 (0, height, 0);
+                newVertices [2] = new Vector3 (width, 0, 0);
+                newVertices [3] = new Vector3 (width, height, 0);
                 
                 // Setup UVs
                 Vector2[] newUVs = new Vector2[newVertices.Length];
@@ -76,7 +74,7 @@ public class TileHarvestablesToEntities : MonoBehaviour
 
                 // pivot of the sprite is center so we have to add 0.5 to x and y
                 entityManager.SetComponentData(entity, new Translation {
-                    Value = new float3(place.x + 0.5f, place.y + 0.5f, -1)
+                    Value = new float3(place.x, place.y, -1)
                 });
 
                 int tileNo = int.Parse(tile.name.Substring(tile.name.LastIndexOf('_') + 1));

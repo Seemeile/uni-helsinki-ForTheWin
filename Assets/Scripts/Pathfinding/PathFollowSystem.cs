@@ -18,7 +18,7 @@ public class PathFollowSystem : ComponentSystem
             if (pathPositionBuffer.Length > 0)
             {
                 int2 nextGridPosition = pathPositionBuffer[pathPositionBuffer.Length - 1].position;
-                float3 targetPosition = new float3(nextGridPosition.x + 0.5f, nextGridPosition.y + 0.5f, -1);
+                float3 targetPosition = new float3(nextGridPosition.x, nextGridPosition.y, -1);
 
                 // check if we're standing on the target
                 if (translation.Value.Equals(targetPosition)) {
@@ -27,7 +27,7 @@ public class PathFollowSystem : ComponentSystem
                         return;
                     }
                     nextGridPosition = pathPositionBuffer[pathPositionBuffer.Length - 1].position;
-                    targetPosition = new float3(nextGridPosition.x + 0.5f, nextGridPosition.y + 0.5f, -1);
+                    targetPosition = new float3(nextGridPosition.x, nextGridPosition.y, -1);
                 }
 
                 // change animation direction when necessary

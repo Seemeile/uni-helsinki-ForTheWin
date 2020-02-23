@@ -23,7 +23,7 @@ public class Pathfinding : ComponentSystem {
             NativeList<float3> blockingEntities = new NativeList<float3>(Allocator.Temp);
             Entities.ForEach((ref Translation translation, ref BlockableEntityComponent blockableEntityComponent) => 
             {
-                blockingEntities.Add(translation.Value - new float3(0.5f, 0.5f, 0));
+                blockingEntities.Add(translation.Value);
             });
             FindPathJob findPathJob = new FindPathJob {
                 startPosition = pathfindingParamsComponent.startPosition,

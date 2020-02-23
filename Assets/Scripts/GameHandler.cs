@@ -52,7 +52,10 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
+        UnitData.spawnUnit(UnitType.KNIGHT, 0, 0);
+        
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, -4, 1);
+        /*
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, 0);
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 0, -1);
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, -1);
@@ -66,7 +69,7 @@ public class GameHandler : MonoBehaviour
         {
             UnitData.spawnUnit(UnitType.KNIGHT, 2, 6);
         }
-           
+        */  
     }
 
   

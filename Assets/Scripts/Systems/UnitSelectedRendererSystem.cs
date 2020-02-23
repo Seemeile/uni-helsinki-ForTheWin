@@ -11,7 +11,7 @@ public class UnitSelectedRenderer : ComponentSystem
 
         Entities.WithAll<EntitySelectedComponent>().ForEach((ref Translation translation) =>
         {
-            float3 position = translation.Value + new float3(0, -.325f, 0);
+            float3 position = translation.Value + new float3(0.5f, 0, 0);
             position.z = 0f;
             Graphics.DrawMesh(
                 GameHandler.instance.unitSelectedCircleMesh,
@@ -25,7 +25,7 @@ public class UnitSelectedRenderer : ComponentSystem
         {
             if (team.number == 1)
             {
-                float3 position = translation.Value + new float3(0, -.325f, 0);
+                float3 position = translation.Value + new float3(0.5f, 0, 0);
                 position.z = 0f;
                 Graphics.DrawMesh(
                     GameHandler.instance.enemyUnitCircleMesh,
