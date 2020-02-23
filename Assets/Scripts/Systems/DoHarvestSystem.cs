@@ -49,7 +49,6 @@ public class DoHarvestSystem : ComponentSystem
                     doHarvestComponent.time += Time.deltaTime;
                     // change to run animation while harvesting (harvest=fight animation)
                     if (UnitAnimation.HARVEST != animationComponent.animationType) {
-                        Debug.Log(animationComponent.animationType);
                         animationComponent.animationType = UnitAnimation.HARVEST;
                         animationComponent.currentFrame = 0;
                         animationComponent.frameCount = UnitData.getUnitAnimationCount(unitComponent.unitType, UnitAnimation.FIGHT);
