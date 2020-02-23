@@ -12,6 +12,7 @@ public class DoHarvestSystem : ComponentSystem
         Entities.ForEach((Entity unitEntity, ref Translation translation, ref DoHarvestComponent doHarvestComponent) => 
         {
             Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+            Debug.Log(doHarvestComponent.state);
             switch(doHarvestComponent.state) 
             {
                 case DoHarvestComponent.STATE.INIT:
@@ -38,7 +39,6 @@ public class DoHarvestSystem : ComponentSystem
                 case DoHarvestComponent.STATE.HARVEST:
                     doHarvestComponent.time += Time.deltaTime;
                     HarvestableComponent harvestableData = EntityManager.GetComponentData<HarvestableComponent>(doHarvestComponent.target);
-                    Debug.Log(doHarvestComponent.time + " - " + harvestableData.harvestTime);
                     if (doHarvestComponent.time >= harvestableData.harvestTime)
                     {
                         Entity hq = doHarvestComponent.target;

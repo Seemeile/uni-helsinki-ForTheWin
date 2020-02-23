@@ -55,6 +55,8 @@ public class PathFollowSystem : ComponentSystem
                 if (math.distance(translation.Value, targetPosition) < .1f) {
                     pathPositionBuffer.RemoveAt(pathPositionBuffer.Length - 1);
                     if(pathPositionBuffer.Length == 0) {
+                        // correct the new position of the entity
+                        translation.Value = targetPosition;
                         animationComponent.animationType = UnitAnimation.IDLE;
                         animationComponent.currentFrame = 0;
                         animationComponent.frameCount = UnitData.getUnitAnimationCount(unitComponent.unitType, UnitAnimation.IDLE);
