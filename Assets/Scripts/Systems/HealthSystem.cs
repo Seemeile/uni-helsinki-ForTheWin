@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Rendering;
+using UnityEngine.SceneManagement;
 
 
 public class HealthSystem : ComponentSystem
@@ -13,41 +14,43 @@ public class HealthSystem : ComponentSystem
     float time = 1;
     protected override void OnUpdate()
     {
-
-        Entities.WithAll<HealthComponent>().ForEach((Entity entity, ref Translation translation, ref HealthComponent health) =>
+        if (SceneManager.GetActiveScene().name == "test")
         {
-            if (!health.bar)
+
+            Entities.WithAll<HealthComponent>().ForEach((Entity entity, ref Translation translation, ref HealthComponent health) =>
             {
-                Vector3Int currentPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-                health.healthBar = UnitData.spawnHealthBar(UnitType.HEALTHBAR, currentPosition.x, currentPosition.y, entity);
-                health.bar = true;
-            }
-        });
+            if (!health.bar)
+                {
+                    Vector3Int currentPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
+                    health.healthBar = UnitData.spawnHealthBar(UnitType.HEALTHBAR, currentPosition.x, currentPosition.y, entity);
+                    health.bar = true;
+                }
+            });
 
-        Entities.WithAll<HealthBarComponent>().ForEach((Entity entity, ref Translation translation, ref HealthBarComponent healthBar, ref UnitComponent unit) =>
-        {
-            HealthComponent hc = EntityManager.GetComponentData<HealthComponent>(healthBar.soldier);
-            float healthValue = hc.health;
+            Entities.WithAll<HealthBarComponent>().ForEach((Entity entity, ref Translation translation, ref HealthBarComponent healthBar, ref UnitComponent unit) =>
+            {
+                HealthComponent hc = EntityManager.GetComponentData<HealthComponent>(healthBar.soldier);
+                float healthValue = hc.health;
 
             //Move the health bar
             float3 currentPosition = Position(healthBar.soldier);
-            translation.Value = currentPosition;
+                translation.Value = currentPosition;
 
-            time += Time.deltaTime;
+                time += Time.deltaTime;
             //Decrease the health bar
             Mesh mesh = CreateNewQuad(healthValue);
-            Material mat = new Material(Shader.Find("Unlit/Transparent"));
-            Sprite tileSprite = Resources.Load<Sprite>("Sprites/Animation/" + "healthBarSprite");
-            mat.mainTexture = tileSprite.texture;
+                Material mat = new Material(Shader.Find("Unlit/Transparent"));
+                Sprite tileSprite = Resources.Load<Sprite>("Sprites/Animation/" + "healthBarSprite");
+                mat.mainTexture = tileSprite.texture;
 
-            entityManager.SetSharedComponentData<RenderMesh>(entity, new RenderMesh
-            {
-                mesh = mesh,
-                material = mat
+                entityManager.SetSharedComponentData<RenderMesh>(entity, new RenderMesh
+                {
+                    mesh = mesh,
+                    material = mat
+                });
             });
-        });
+        }
     }
-
 
 
     // to get to position of an entity

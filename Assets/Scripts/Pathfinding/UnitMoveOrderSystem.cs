@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Rendering;
+using UnityEngine.SceneManagement;
 
 public class UnitMoveOrderSystem : ComponentSystem
 {
@@ -21,21 +22,24 @@ public class UnitMoveOrderSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (SceneManager.GetActiveScene().name == "test")
         {
-            handleLeftMousePressed();
-        }
-        if (Input.GetMouseButton(0))
-        {
-            handleLeftMouseHeldDown();
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            handleLeftMouseReleased();
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            handleRightMousePressed();
+            if (Input.GetMouseButtonDown(0))
+            {
+                handleLeftMousePressed();
+            }
+            if (Input.GetMouseButton(0))
+            {
+                handleLeftMouseHeldDown();
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                handleLeftMouseReleased();
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                handleRightMousePressed();
+            }
         }
     }
 
@@ -88,8 +92,8 @@ public class UnitMoveOrderSystem : ComponentSystem
         if (smallSelectionAreaSize < selectionAreaMinSize)
         {
             //Selection too small, meaning if there is only one click
-            lowerLeftPosition += new float3(-1f, -1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * .5f;
-            upperRightPosition += new float3(+1f, +1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * .5f;
+            lowerLeftPosition += new float3(-1f, -1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * 1f;
+            upperRightPosition += new float3(+1f, +1f, 0f) * (selectionAreaMinSize - selectionAreaSize) * 1f;
             selectOnlyOneEntity = true;
         }
         //Selection of entities
@@ -292,6 +296,7 @@ public class UnitMoveOrderSystem : ComponentSystem
             });
         }
     }
+        
 
     // Return the list of possible cells around the target cell
     private List<Vector3Int> GetPositionListAround(Vector3Int startPosition, int positionCount)
