@@ -15,9 +15,6 @@ public class GameHandler : MonoBehaviour
     public Mesh demonMesh;
     public Material demonMaterial;
     public Transform selectionAreaTransform;
-    public GameObject healthBarGameObject;
-    public Material healthBarMaterial;
-    public Mesh healthBarMesh;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
     public Material enemyUnitCircleMaterial;
@@ -54,7 +51,7 @@ public class GameHandler : MonoBehaviour
     {
         UnitData.spawnUnit(UnitType.KNIGHT, 0, 0);
         
-        UnitData.spawnEnemyUnit(UnitType.KNIGHT, -4, 1);
+        UnitData.spawnEnemyUnit(UnitType.PEASANT, -4, 1);
         /*
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, 0);
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 0, -1);
