@@ -12,26 +12,26 @@ public class DoHarvestSystem : ComponentSystem
         Entities.ForEach((Entity unitEntity, ref Translation translation, ref DoHarvestComponent doHarvestComponent) => 
         {
             Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
-            Debug.Log(doHarvestComponent.state);
             switch(doHarvestComponent.state) 
             {
                 case DoHarvestComponent.STATE.INIT:
                     Translation harvestableTranslation = EntityManager.GetComponentData<Translation>(doHarvestComponent.target);
                     Vector3Int targetCellPosition = GameHandler.instance.tilemap.WorldToCell(harvestableTranslation.Value);
-                    targetCellPosition.y = targetCellPosition.y + 1; // TODO: improve
+                    Vector3Int freeSpaceAround = getFreeNeighborSpace(targetCellPosition);
 
                     PostUpdateCommands.RemoveComponent<PathfindingParamsComponent>(unitEntity);
                     PostUpdateCommands.AddComponent(unitEntity, new PathfindingParamsComponent
                     {
                         startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                        endPosition = new int2(targetCellPosition.x, targetCellPosition.y)
+                        endPosition = new int2(freeSpaceAround.x, freeSpaceAround.y)
                     });                    
                     EntityManager.AddBuffer<PathPosition>(unitEntity);
-                    doHarvestComponent.targetCell = targetCellPosition;
+                    doHarvestComponent.targetCell = freeSpaceAround;
                     doHarvestComponent.state = DoHarvestComponent.STATE.GO;
                     break;
                 case DoHarvestComponent.STATE.GO:
-                    if (currentCellPosition.Equals(doHarvestComponent.targetCell)) 
+                    if (currentCellPosition.x.Equals(doHarvestComponent.targetCell.x) 
+                        && currentCellPosition.y.Equals(doHarvestComponent.targetCell.y)) 
                     {
                         doHarvestComponent.state = DoHarvestComponent.STATE.HARVEST;
                     }
@@ -51,18 +51,18 @@ public class DoHarvestSystem : ComponentSystem
                         });
                         Translation hqTranslation = EntityManager.GetComponentData<Translation>(hq);
                         Vector3Int hqCellPosition = GameHandler.instance.tilemap.WorldToCell(hqTranslation.Value);
-                        hqCellPosition.y = hqCellPosition.y - 1; // TODO: improve
+                        Vector3Int hqFreeSpaceAround = getFreeNeighborSpace(hqCellPosition);
 
                         PostUpdateCommands.RemoveComponent<PathfindingParamsComponent>(unitEntity);
                         PostUpdateCommands.AddComponent(unitEntity, new PathfindingParamsComponent
                         {
                             startPosition = new int2(currentCellPosition.x, currentCellPosition.y),
-                            endPosition = new int2(hqCellPosition.x, hqCellPosition.y)
+                            endPosition = new int2(hqFreeSpaceAround.x, hqFreeSpaceAround.y)
                         });                    
                         EntityManager.AddBuffer<PathPosition>(unitEntity);
 
                         doHarvestComponent.hq = hq;
-                        doHarvestComponent.hqCell = hqCellPosition;
+                        doHarvestComponent.hqCell = hqFreeSpaceAround;
                         doHarvestComponent.carryType = harvestableData.type;
                         doHarvestComponent.carryAmount = 50; // TODO: dynamic
                         EntityManager.SetComponentData(doHarvestComponent.target, new HarvestableComponent {
@@ -74,7 +74,8 @@ public class DoHarvestSystem : ComponentSystem
                     }
                     break;
                 case DoHarvestComponent.STATE.RETURN:
-                    if (currentCellPosition.Equals(doHarvestComponent.hqCell)) 
+                    if (currentCellPosition.x.Equals(doHarvestComponent.hqCell.x) 
+                        && currentCellPosition.y.Equals(doHarvestComponent.hqCell.y)) 
                     {
                         if (HarvestableType.GOLDMINE.Equals(doHarvestComponent.carryType))
                         {
@@ -91,5 +92,25 @@ public class DoHarvestSystem : ComponentSystem
                     break;
             }
         });
+    }
+
+    private Vector3Int getFreeNeighborSpace(Vector3Int targetCellPosition)
+    {
+        for (float x = targetCellPosition.x - 1; x <= targetCellPosition.x + 1; x++) 
+        {
+            for (float y = targetCellPosition.y - 1; y <= targetCellPosition.y + 1; y++)
+            {
+                bool cellIsFree = true;
+                Entities.WithAll<BlockableEntityComponent>().ForEach((Entity entity, ref Translation translation) => {
+                    if (translation.Value.x.Equals(x) && translation.Value.y.Equals(y)) {
+                        cellIsFree = false;
+                    }
+                });
+                if (cellIsFree) {
+                    return new Vector3Int((int) x, (int) y, -2);
+                }
+            }
+        }
+        return targetCellPosition;
     }
 }
