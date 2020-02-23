@@ -68,12 +68,7 @@ public class UnitMoveOrderSystem : ComponentSystem
             Entities.WithAll<EntitySelectedComponent>().ForEach((Entity entity) =>
             {
                 PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
-
-                if (EntityManager.HasComponent<StructureSelectedComponent>(entity))
-                {
-                    PostUpdateCommands.RemoveComponent<StructureSelectedComponent>(entity);
-                    UI.instance.hideStructureOverlay();
-                }
+                UI.instance.hideActionsOverlay();
             });
         }
 
@@ -145,12 +140,6 @@ public class UnitMoveOrderSystem : ComponentSystem
         GameHandler.instance.selectionAreaTransform.gameObject.SetActive(false);
         currentMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         currentMouseCell = GameHandler.instance.tilemap.WorldToCell(currentMousePosition);
-
-        //First deselect all the building entities
-        Entities.WithAll<StructureSelectedComponent>().ForEach((Entity entity) =>
-        {
-            PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
-        });
         
         float3 targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int targetCellPosition = GameHandler.instance.tilemap.WorldToCell(targetPosition);

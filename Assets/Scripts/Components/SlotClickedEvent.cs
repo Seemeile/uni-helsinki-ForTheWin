@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-public struct UnitSlotClickedEvent : IComponentData
+public struct SlotClickedEvent : IComponentData
 {
     public int slotNumber;
 }

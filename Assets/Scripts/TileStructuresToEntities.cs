@@ -81,8 +81,6 @@ public class TileStructuresToEntities : MonoBehaviour
                 entityManager.SetComponentData(entity, new StructureComponent {
                     type = buildingType
                 });
-
-              
             }
         }
         tilemap.ClearAllTiles();
