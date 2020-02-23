@@ -11,6 +11,7 @@ public class UnitData
 
 
     private static Dictionary<UnitType, string> unitSprites = new Dictionary<UnitType, string> {
+        {UnitType.WIZARD, "wizzard_m_idle_anim_f0" },
         {UnitType.PEASANT, "skelet_idle_anim_f0" },
         {UnitType.KNIGHT, "knight_f_idle_anim_f0" },
         {UnitType.ELF, "elf_f_idle_anim_f0" },
@@ -18,22 +19,48 @@ public class UnitData
     };
 
     private static Dictionary<UnitType, string[]> idleAnimations = new Dictionary<UnitType, string[]> {
+        {UnitType.WIZARD, new string[]{ "wizzard_m_idle_anim_f0", "wizzard_m_idle_anim_f1", "wizzard_m_idle_anim_f2", "wizzard_m_idle_anim_f3"} },
         {UnitType.PEASANT, new string[]{ "skelet_idle_anim_f0", "skelet_idle_anim_f1", "skelet_idle_anim_f2", "skelet_idle_anim_f3"} },
         {UnitType.KNIGHT, new string[]{ "knight_f_idle_anim_f0", "knight_f_idle_anim_f1", "knight_f_idle_anim_f2", "knight_f_idle_anim_f3"} },
         {UnitType.ELF, new string[]{ "elf_f_idle_anim_f0", "elf_f_idle_anim_f1", "elf_f_idle_anim_f2", "elf_f_idle_anim_f3"} },
     };
 
     private static Dictionary<UnitType, string[]> runAnimations = new Dictionary<UnitType, string[]> {
+        {UnitType.WIZARD, new string[]{ "wizzart_m_run_anim_f0", "wizzart_m_run_anim_f1", "wizzart_m_run_anim_f2", "wizzart_m_run_anim_f3"} },
         {UnitType.PEASANT, new string[]{ "skelet_run_anim_f0", "skelet_run_anim_f1", "skelet_run_anim_f2", "skelet_run_anim_f3"} },
         {UnitType.KNIGHT, new string[]{ "knight_f_run_anim_f0", "knight_f_run_anim_f1", "knight_f_run_anim_f2", "knight_f_run_anim_f3"} },
         {UnitType.ELF, new string[]{ "elf_f_run_anim_f0", "elf_f_run_anim_f1", "elf_f_run_anim_f2", "elf_f_run_anim_f3"} },
     };
 
     private static Dictionary<UnitType, string[]> fightAnimations = new Dictionary<UnitType, string[]> {
+        {UnitType.WIZARD, new string[]{ "wizzart_m_run_anim_f0", "wizzart_m_run_anim_f1", "wizzart_m_hit_anim_f0", "wizzart_m_run_anim_f1", "wizzart_m_run_anim_f0"} },
         {UnitType.PEASANT, new string[]{ "skelet_idle_anim_f3", "skelet_run_anim_f0", "skelet_run_anim_f1", "skelet_run_anim_f0", "skelet_idle_anim_f3"} },
         {UnitType.KNIGHT, new string[]{ "knight_f_idle_anim_f3", "knight_f_run_anim_f0", "knight_f_run_anim_f1", "knight_f_hit_anim_f0", "knight_f_run_anim_f1", "knight_f_run_anim_f0", "knight_f_idle_anim_f3"} },
         {UnitType.ELF, new string[]{ "elf_f_idle_anim_f1", "elf_f_idle_anim_f0", "elf_f_hit_anim_f0", "elf_f_idle_anim_f0", "elf_f_idle_anim_f1"} },
     };
+
+    private static Dictionary<UnitType, BuildingType[]> unitActions = new Dictionary<UnitType, BuildingType[]> {
+        {UnitType.WIZARD, new BuildingType[] { BuildingType.HQ }},
+        {UnitType.KNIGHT, new BuildingType[] { }},
+        {UnitType.PEASANT, new BuildingType[] { BuildingType.FARM, BuildingType.BARRACK }},
+        {UnitType.ELF, new BuildingType[] { }},
+    };
+
+    private static Dictionary<UnitType, int[]> unitCosts = new Dictionary<UnitType, int[]> {
+        {UnitType.PEASANT, new int[]{ 50, 0 }},
+        {UnitType.KNIGHT, new int[]{ 200, 0 }},
+        {UnitType.ELF, new int[]{ 150, 50 }}
+    };
+
+    public static int[] getUnitCosts(UnitType unitType)
+    {
+        return unitCosts[unitType];
+    }
+
+    public static BuildingType[] getUnitActions(UnitType unitType)
+    {
+        return unitActions[unitType];
+    }
 
     public static string getUnitAnimation(UnitType unitType, UnitAnimation unitAnimation, int animationIndex)
     {

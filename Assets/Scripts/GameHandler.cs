@@ -49,9 +49,10 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
-        UnitData.spawnUnit(UnitType.KNIGHT, 0, 0);
+        //UnitData.spawnUnit(UnitType.KNIGHT, 0, 0);
+        UnitData.spawnUnit(UnitType.WIZARD, 0, 0);
         
-        UnitData.spawnEnemyUnit(UnitType.PEASANT, -4, 1);
+        //UnitData.spawnEnemyUnit(UnitType.PEASANT, -4, 1);
         /*
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 1, 0);
         UnitData.spawnEnemyUnit(UnitType.KNIGHT, 0, -1);

@@ -101,7 +101,7 @@ public class DoHarvestSystem : ComponentSystem
             for (float y = targetCellPosition.y - 1; y <= targetCellPosition.y + 1; y++)
             {
                 bool cellIsFree = true;
-                Entities.WithAll<BlockableEntityComponent>().ForEach((Entity entity, ref Translation translation) => {
+                Entities.ForEach((ref Translation translation) => {
                     if (translation.Value.x.Equals(x) && translation.Value.y.Equals(y)) {
                         cellIsFree = false;
                     }

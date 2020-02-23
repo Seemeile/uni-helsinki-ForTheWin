@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 
-public class UnitSlotScript : MonoBehaviour
+public class SlotScript : MonoBehaviour
 {
     public int slotNumber;
 
@@ -13,8 +13,8 @@ public class UnitSlotScript : MonoBehaviour
         if (sr.sprite)
         {
             EntityManager entityManager = World.Active.EntityManager;
-            Entity entity = entityManager.CreateEntity(typeof(UnitSlotClickedEvent));
-            entityManager.SetComponentData(entity, new UnitSlotClickedEvent {
+            Entity entity = entityManager.CreateEntity(typeof(SlotClickedEvent));
+            entityManager.SetComponentData(entity, new SlotClickedEvent {
                 slotNumber = slotNumber
             });
         }

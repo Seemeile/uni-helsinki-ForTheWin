@@ -2,5 +2,5 @@ using System;
 
 public enum UnitType 
 {
-    PEASANT, KNIGHT, ELF, HEALTHBAR
+    WIZARD, PEASANT, KNIGHT, ELF, HEALTHBAR
 }
