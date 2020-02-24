@@ -7,6 +7,7 @@ using Unity.Transforms;
 using Unity.Rendering;
 using System;
 using UnityEngine.Tilemaps;
+using Unity.Collections;
 
 public class GameHandler : MonoBehaviour
 {
@@ -36,6 +37,8 @@ public class GameHandler : MonoBehaviour
     [HideInInspector]
     public int[] tilemapCellBoundsY;
 
+    public static bool hasToDelete;
+    public static bool hasToLoad;
 
     private void Awake()
     {
@@ -48,8 +51,14 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
-        if (!SettingScript.isSaved)
+        if(hasToLoad)
         {
+            SaveSystem.loading = true;
+            hasToLoad = false;
+        }
+        if (SettingScript.newGame)
+        {
+
             UnitData.spawnUnit(UnitType.WIZARD, 0, 0);
             UnitData.spawnEnemyUnit(UnitType.KNIGHT, -8, 2);
             UnitData.spawnEnemyUnit(UnitType.KNIGHT, -7, 5);
