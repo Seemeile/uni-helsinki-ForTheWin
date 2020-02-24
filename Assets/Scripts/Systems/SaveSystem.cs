@@ -11,31 +11,81 @@ using UnityEngine.SceneManagement;
 
 public class SaveSystem : ComponentSystem
 {
-    public static List<Entity> listOfHarvestable = new List<Entity>();
+    public static List<Entity> listOfPreviousUnits = new List<Entity>();
+    public static List<Entity> listOfPreviousHealthBar = new List<Entity>();
+    public static List<Entity> listOfDestroyedHarvestable = new List<Entity>();
+    public static List<Entity> listOfPreviousStructures = new List<Entity>();
+
     public int woodAmount = new int();
     public int goldAmount = new int();
 
+    public static bool loading;
+
     protected override void OnUpdate()
-    {/*
-
-        woodAmount = UI.instance.getWoodAmount();
-        goldAmount = UI.instance.getGoldAmount();
-
-        for (int k=0; k < listOfHarvestable.Count ;  k++)
+    {
+        for(int k=0; k<listOfDestroyedHarvestable.Count; k++)
         {
+            Debug.Log("tree " + listOfDestroyedHarvestable[k]);
+        }
 
-        }*/
+        if (SceneManager.GetActiveScene().name == "test")
+        {
+            //saving all the entities
+            Entities.WithAny<UnitComponent>().ForEach((Entity entity) =>
+            {
+                if (!listOfPreviousUnits.Contains(entity))
+                {
+                    listOfPreviousUnits.Add(entity);
+                }
+            });
+            Entities.WithAny<StructureComponent>().ForEach((Entity entity) =>
+            {
+                if (!listOfPreviousStructures.Contains(entity))
+                {
+                    listOfPreviousStructures.Add(entity);
+                }
+            });
+
+            //Saving the datas
+            woodAmount = UI.instance.getWoodAmount();
+            goldAmount = UI.instance.getGoldAmount();
+
+
+            //NEW GAME
+            if (GameHandler.hasToDelete)
+            {
+                DestroyUnits(listOfPreviousStructures);
+                DestroyUnits(listOfPreviousUnits);
+                GameHandler.hasToDelete = false;
+
+            }
+
+            //LOAD THE PREVIOUS GAME
+            //destroy all the ressources that have already been harvested 
+
+            if(loading)
+            {
+                Debug.Log("destroy tree");
+                DestroyUnits(listOfDestroyedHarvestable);
+
+                UI.instance.setWoodAmount(woodAmount);
+                Debug.Log("setAmount");
+                UI.instance.setGoldAmount(goldAmount);
+
+                loading = false;
+            }
+        }
+        
     }
 
-    public void DestroyHarvestable(Entity harvestable)
+    public void DestroyUnits(List<Entity> list)
     {
-        Entities.WithAll<HarvestableComponent>().ForEach((Entity entity) =>
+        for(int k=0; k<list.Count; k++)
         {
-            if (entity == harvestable)
-            {
-                PostUpdateCommands.DestroyEntity(entity);
-            }
-        });
+            PostUpdateCommands.DestroyEntity(list[k]);
+            
+        }
+        list.Clear();
     }
 }
 

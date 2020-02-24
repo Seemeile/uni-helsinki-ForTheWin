@@ -94,14 +94,14 @@ public class UI : MonoBehaviour
         actionsOverlay.SetActive(false);   
     }
 
-    private void setWoodAmount(int amount)
+    public void setWoodAmount(int amount)
     {
         GameObject woodObject = canvas.transform.Find("WoodAmount").gameObject;
         Text wood = woodObject.GetComponent<Text>();
         wood.text = "" + amount;
     }
 
-    private void setGoldAmount(int amount)
+    public void setGoldAmount(int amount)
     {
         GameObject goldObject = canvas.transform.Find("GoldAmount").gameObject;
         Text gold = goldObject.GetComponent<Text>();
