@@ -12,11 +12,11 @@ public class CameraController : MonoBehaviour
     {
         pos = transform.position;
         handleKeyMovement();
-        handleMouseMovement();
+        //handleMouseMovement();
         transform.position = pos;
     }
 
-    private void handleKeyMovement()
+    private void handleMouseMovement()
     {
         if (Input.mousePosition.y >= Screen.height - borderThickness)
         {
@@ -36,7 +36,7 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    private void handleMouseMovement()
+    private void handleKeyMovement()
     {
         if (Input.GetKey(KeyCode.UpArrow)) 
         {

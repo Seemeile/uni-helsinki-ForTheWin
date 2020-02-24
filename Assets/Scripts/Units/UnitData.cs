@@ -50,8 +50,8 @@ public class UnitData
 
     private static Dictionary<UnitType, int[]> unitCosts = new Dictionary<UnitType, int[]> {
         {UnitType.PEASANT, new int[]{ 50, 0 }},
-        {UnitType.KNIGHT, new int[]{ 200, 0 }},
-        {UnitType.ELF, new int[]{ 150, 50 }}
+        {UnitType.KNIGHT, new int[]{ 100, 0 }},
+        {UnitType.ELF, new int[]{ 100, 50 }}
     };
 
     public static int[] getUnitCosts(UnitType unitType)

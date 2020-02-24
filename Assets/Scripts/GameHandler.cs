@@ -51,6 +51,8 @@ public class GameHandler : MonoBehaviour
         if (!SettingScript.isSaved)
         {
             UnitData.spawnUnit(UnitType.WIZARD, 0, 0);
+            UnitData.spawnEnemyUnit(UnitType.KNIGHT, -8, 2);
+            UnitData.spawnEnemyUnit(UnitType.KNIGHT, -7, 5);
         }
     }
 
