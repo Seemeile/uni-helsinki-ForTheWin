@@ -104,14 +104,14 @@ public class FightSystem : ComponentSystem
                 {
                     if (fightComponent.hasToMove == false)
                     {
-                        Fight(fightComponent.target);
+                        Fight(entity, fightComponent.target);
                     }
                     else
                     {
                         if (Norme(GameHandler.instance.tilemap.WorldToCell(translation.Value), Position(fightComponent.target)) <= 1 && (Norme(GameHandler.instance.tilemap.WorldToCell(translation.Value), Position(fightComponent.target)) > 0))
                         {
                             //Then the unit is in range so it does not need to move
-                            Fight(fightComponent.target);
+                            Fight(entity, fightComponent.target);
                         }
                         else
                         {
@@ -258,13 +258,25 @@ public class FightSystem : ComponentSystem
     }
 
 
-    private void Fight(Entity enemyTarget)
+    private void Fight(Entity attacker, Entity enemyTarget)
     {
+        UnitComponent unitComponent = EntityManager.GetComponentData<UnitComponent>(attacker);
         Entities.WithAll<FightComponent>().ForEach((Entity entity, ref HealthComponent health, ref FightComponent fightComponent) =>
         {
             if(entity == enemyTarget)
             {
-                health.health -= 10;
+                if (unitComponent.unitType == UnitType.ELF || unitComponent.unitType == UnitType.KNIGHT)
+                {
+                    health.health -= 10;
+                }
+                else if (unitComponent.unitType == UnitType.WIZARD)
+                {
+                    health.health -= 20;
+                }
+                else if (unitComponent.unitType == UnitType.PEASANT)
+                {
+                    health.health -= 5;
+                }
             }
         });
     }

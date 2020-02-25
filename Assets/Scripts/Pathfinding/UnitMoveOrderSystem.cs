@@ -204,7 +204,7 @@ public class UnitMoveOrderSystem : ComponentSystem
              Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref UnitComponent unitComponent) =>
              {
                  //If the unit is a close range fighter
-                 if (unitComponent.unitType == UnitType.KNIGHT)
+                 if (unitComponent.unitType == UnitType.KNIGHT || unitComponent.unitType == UnitType.PEASANT)
                  {
 
                      if (closeRangeCount < nbrPositionAdj)
@@ -223,7 +223,7 @@ public class UnitMoveOrderSystem : ComponentSystem
                      }
                  }
                  //If the unit is a long range fighter
-                 else if (unitComponent.unitType == UnitType.ELF)
+                 else if (unitComponent.unitType == UnitType.ELF || unitComponent.unitType == UnitType.WIZARD)
                  {
 
                      if (longRangeCount < nbrPositionAdj + nbrPositionAdjRange)
