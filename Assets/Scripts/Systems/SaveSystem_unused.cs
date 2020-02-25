@@ -8,7 +8,7 @@ using Unity.Rendering;
 using System;
 using UnityEngine.SceneManagement;
 
-
+/*
 public class SaveSystem : ComponentSystem
 {
     public static List<Entity> listOfPreviousUnits = new List<Entity>();
@@ -88,4 +88,4 @@ public class SaveSystem : ComponentSystem
         list.Clear();
     }
 }
-
+*/

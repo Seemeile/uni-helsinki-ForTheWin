@@ -14,7 +14,7 @@ public class HarvestableDepletedSystem : ComponentSystem
             if (harvestableComponent.ressourceAmount <= 0)
             {
                 EntityManager.DestroyEntity(entity);
-                SaveSystem.listOfDestroyedHarvestable.Add(entity);
+                //SaveSystem.listOfDestroyedHarvestable.Add(entity);
             }
         });
         }

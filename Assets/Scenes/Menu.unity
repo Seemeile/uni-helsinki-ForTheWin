@@ -376,7 +376,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: SAVES
+  m_text: LOAD GAME
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -445,10 +445,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 370991209}
-    characterCount: 5
+    characterCount: 9
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 1
+    spaceCount: 1
+    wordCount: 2
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -558,7 +558,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 9.090466, y: -269.35562}
+  m_AnchoredPosition: {x: 9.090466, y: -432.2}
   m_SizeDelta: {x: 183.6, y: 81.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &570189890
@@ -696,7 +696,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 15.4, y: -114.1}
+  m_AnchoredPosition: {x: 15.4, y: -267.72}
   m_SizeDelta: {x: 256.62, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &608305864
@@ -830,7 +830,7 @@ GameObject:
   - component: {fileID: 809440548}
   - component: {fileID: 809440547}
   m_Layer: 5
-  m_Name: OptionsButton
+  m_Name: LoadButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -854,7 +854,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 9.090466, y: -152.35562}
-  m_SizeDelta: {x: 339.6, y: 81.3}
+  m_SizeDelta: {x: 450, y: 81.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &809440547
 MonoBehaviour:
@@ -1531,7 +1531,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 9.090466, y: -55}
+  m_AnchoredPosition: {x: 9.090466, y: -194.2}
   m_SizeDelta: {x: 183.6, y: 81.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1457038689
@@ -1577,8 +1577,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 491850431}
-        m_MethodName: Load
+      - m_Target: {fileID: 1147534739}
+        m_MethodName: LoadGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
