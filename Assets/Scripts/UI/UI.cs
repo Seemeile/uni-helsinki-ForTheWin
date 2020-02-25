@@ -22,22 +22,13 @@ public class UI : MonoBehaviour
         canvas = transform.Find("GameOverlay").Find("Canvas").gameObject;
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        
-    }
-
     public void showUnitActions(UnitType unitType)
     {
-        // set icon to building sprite
-
         GameObject icon = actionsOverlay.transform.Find("SelectionIcon").gameObject;
         SpriteRenderer iconRenderer = icon.GetComponent<SpriteRenderer>();
         string spriteName = UnitData.getUnitSprite(unitType);
         Sprite unitSprite = Resources.Load<Sprite>("Sprites/Animation/" + spriteName);
         iconRenderer.sprite = unitSprite;
-        //iconRenderer.gameObject.transform.localScale = new Vector3(1, 1, 0);
         
         // show buildable units
         BuildingType[] unitActions = UnitData.getUnitActions(unitType);
@@ -46,13 +37,14 @@ public class UI : MonoBehaviour
             // reset
             GameObject unitSlot = actionsOverlay.transform.Find("Slot" + (i + 1)).gameObject;
             SpriteRenderer unitSlotRenderer = unitSlot.GetComponent<SpriteRenderer>();
-            //unitSlotRenderer.gameObject.transform.localScale = new Vector3(6, 6, 0);
+            SlotScript slotscript = (SlotScript) unitSlot.GetComponent(typeof(SlotScript));
             unitSlotRenderer.sprite = null;
             // set unit icon
             if (i < unitActions.Length)
             {
                 int tileNo = BuildingData.getTileNumber(unitActions[i]);
                 Sprite unitSlotSprite = Resources.Load<Sprite>("Sprites/TileSprites/tileset16x16_1_" + tileNo);
+                slotscript.spriteName = "tileset16x16_1_" + tileNo;
                 unitSlotRenderer.sprite = unitSlotSprite;
             }
         }
@@ -61,13 +53,11 @@ public class UI : MonoBehaviour
 
     public void showStructureActions(BuildingType structureType) 
     {
-        // set icon to building sprite
         GameObject icon = actionsOverlay.transform.Find("SelectionIcon").gameObject;
         SpriteRenderer iconRenderer = icon.GetComponent<SpriteRenderer>();
         int tileNo = BuildingData.getTileNumber(structureType);
         Sprite structureSprite = Resources.Load<Sprite>("Sprites/TileSprites/tileset16x16_1_" + tileNo);
         iconRenderer.sprite = structureSprite;
-        //iconRenderer.gameObject.transform.localScale = new Vector3(6, 6, 0);
 
         // show buildable units
         UnitType[] buildableUnits = BuildingData.getBuildableUnits(structureType);
@@ -75,14 +65,15 @@ public class UI : MonoBehaviour
         {
             // reset
             GameObject unitSlot = actionsOverlay.transform.Find("Slot" + (i + 1)).gameObject;
+            SlotScript slotscript = (SlotScript) unitSlot.GetComponent(typeof(SlotScript));
             SpriteRenderer unitSlotRenderer = unitSlot.GetComponent<SpriteRenderer>();
-            //unitSlotRenderer.gameObject.transform.localScale = new Vector3(1, 1, 0);
             unitSlotRenderer.sprite = null;
             // set unit icon
             if (i < buildableUnits.Length)
             {
                 string spriteName = UnitData.getUnitSprite(buildableUnits[i]);
                 Sprite unitSlotSprite = Resources.Load<Sprite>("Sprites/Animation/" + spriteName);
+                slotscript.spriteName = spriteName;
                 unitSlotRenderer.sprite = unitSlotSprite;
             }
         }

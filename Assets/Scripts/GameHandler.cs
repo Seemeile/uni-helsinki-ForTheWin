@@ -1,20 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using Unity.Rendering;
-using System;
 using UnityEngine.Tilemaps;
-using Unity.Collections;
 
 public class GameHandler : MonoBehaviour
 {
     public static GameHandler instance;
-
-    public Mesh demonMesh;
-    public Material demonMaterial;
     public Transform selectionAreaTransform;
     public Material unitSelectedCircleMaterial;
     public Mesh unitSelectedCircleMesh;
@@ -51,19 +42,10 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
-        /*
-        if(hasToLoad)
-        {
-            SaveSystem.loading = true;
-            hasToLoad = false;
-        }
-        if (SettingScript.newGame)
-        {
-                */
-            UnitData.spawnUnit(UnitType.WIZARD, 0, 0);
-            UnitData.spawnEnemyUnit(UnitType.KNIGHT, -8, 2);
-            UnitData.spawnEnemyUnit(UnitType.KNIGHT, -7, 5);
-        //}
+        // static unit placement
+        UnitData.spawnUnit(UnitType.WIZARD, 0, 0);
+        UnitData.spawnEnemyUnit(UnitType.KNIGHT, -8, 2);
+        UnitData.spawnEnemyUnit(UnitType.KNIGHT, -7, 5);
     }
 }
 

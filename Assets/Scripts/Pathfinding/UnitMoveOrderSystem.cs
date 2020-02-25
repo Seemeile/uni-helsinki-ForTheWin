@@ -4,7 +4,6 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Unity.Rendering;
 using UnityEngine.SceneManagement;
 
 public class UnitMoveOrderSystem : ComponentSystem
@@ -16,13 +15,10 @@ public class UnitMoveOrderSystem : ComponentSystem
     private Vector3Int currentMouseCell;
     private float3 lowerLeftPosition;
     private float3 upperRightPosition;
-    //public int[] tilemapCellBoundsX = GameHandler.instance.tilemapCellBoundsX;
-    //public int[] tilemapCellBoundsY = GameHandler.instance.tilemapCellBoundsY;
-
 
     protected override void OnUpdate()
     {
-        if (SceneManager.GetActiveScene().name == "test")
+        if (SceneManager.GetActiveScene().name.Equals("Game"))
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -40,7 +36,7 @@ public class UnitMoveOrderSystem : ComponentSystem
             {
                 handleRightMousePressed();
             }
-        }
+        }   
     }
 
     private void handleLeftMousePressed()
@@ -95,11 +91,9 @@ public class UnitMoveOrderSystem : ComponentSystem
         int selectEntityCount = 0;
         Entities.WithAll<TeamComponent>().ForEach((Entity entity, ref Translation translation, ref TeamComponent team) =>
         {
-
             if (selectOnlyOneEntity == false || selectEntityCount < 1)
             {
                 float3 entityPosition = translation.Value;
-
                 if (entityPosition.x >= lowerLeftPosition.x &&
                     entityPosition.y >= lowerLeftPosition.y &&
                     entityPosition.x <= upperRightPosition.x &&
@@ -118,7 +112,6 @@ public class UnitMoveOrderSystem : ComponentSystem
             if (selectOnlyOneEntity == false || selectEntityCount < 1)
             {
                 float3 entityPosition = translation.Value;
-
                 if (entityPosition.x >= lowerLeftPosition.x &&
                     entityPosition.y >= lowerLeftPosition.y &&
                     entityPosition.x <= upperRightPosition.x &&
@@ -130,8 +123,6 @@ public class UnitMoveOrderSystem : ComponentSystem
                 }
             }
         });
-
-
     }
 
     //Right mouse button down
@@ -169,10 +160,8 @@ public class UnitMoveOrderSystem : ComponentSystem
             }
         });
 
-        if (IsAnAlly(targetCellPosition)) //If the target is an ally : do nothing
-        {
-            
-        }
+        if (IsAnAlly(targetCellPosition)) //If the target is an ally
+        { /*do nothing*/ }
         else if (IsAnEnemy(targetCellPosition)) //If the target is an enemy
         {
             int nbrPositionAdj = 0;
@@ -185,7 +174,6 @@ public class UnitMoveOrderSystem : ComponentSystem
             List<Vector3Int> positionFinalLongRange = new List<Vector3Int>();
             int closeRangeCount = 0;
             int longRangeCount = 0;
-   ;
 
             // Keep only the free cells
             for (int k =0; k < positionAdjaccent.Count ; k++)
@@ -213,7 +201,6 @@ public class UnitMoveOrderSystem : ComponentSystem
                 }
             }
 
-
              Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref UnitComponent unitComponent) =>
              {
                  //If the unit is a close range fighter
@@ -235,7 +222,6 @@ public class UnitMoveOrderSystem : ComponentSystem
 
                      }
                  }
-
                  //If the unit is a long range fighter
                  else if (unitComponent.unitType == UnitType.ELF)
                  {
@@ -254,14 +240,12 @@ public class UnitMoveOrderSystem : ComponentSystem
                          longRangeCount++;
 
                      }
-                 }
-                 
+                 }     
                  //Unselect all the entities who cannot fight
                  else
                  {
                      PostUpdateCommands.RemoveComponent<EntitySelectedComponent>(entity);
                  }
-
              });
         }
         else 
@@ -319,7 +303,6 @@ public class UnitMoveOrderSystem : ComponentSystem
             }
             intermediaryCount++;
         }
-
         return listPositionFinal;
     }
 
@@ -348,7 +331,6 @@ public class UnitMoveOrderSystem : ComponentSystem
     }
 
     //Check if one cell is free or available
-
     private bool ThisCellIsFree(Vector3Int cell)
     {
         bool isFree = true;
@@ -398,7 +380,6 @@ public class UnitMoveOrderSystem : ComponentSystem
     }
 
     //Check if the mouse is above an enemy entity
-
     private bool IsAnEnemy(Vector3Int currentMouseCell)
     {
         bool enemy = false;
@@ -414,8 +395,8 @@ public class UnitMoveOrderSystem : ComponentSystem
         });
         return enemy;
     }
-    // Check is TerrainHeightmapSyncControl mouse is above an ally entity
 
+    // Check is TerrainHeightmapSyncControl mouse is above an ally entity
     private bool IsAnAlly(Vector3Int currentMouseCell)
     {
         bool ally = false;
@@ -434,8 +415,7 @@ public class UnitMoveOrderSystem : ComponentSystem
 
     //Return le list of free adjacent cells around many positions
     private List<Vector3Int> GetListOfAdjacentCells(List<Vector3Int> listEnemy)
-    {
-        
+    {  
         List<Vector3Int> listPosition = new List<Vector3Int>();
         List<int> listExtremum = GetListOfExtremum(listEnemy);
         List<Vector3Int> potentialCells = new List<Vector3Int>();
@@ -444,8 +424,7 @@ public class UnitMoveOrderSystem : ComponentSystem
         potentialCells.Add(listEnemy[0]);
 
         for (int k=0; k<listEnemy.Count;k++)
-        {
-            
+        {      
             if (listEnemy[k].x == listExtremum[0])
             {
                 potentialCells[0] = new Vector3Int(listEnemy[k].x - 1, listEnemy[k].y, -20);
@@ -520,8 +499,7 @@ public class UnitMoveOrderSystem : ComponentSystem
                 }
             }
         }
-        
-            return listPosition;
+        return listPosition;
     }
 
     // Return the list of every units next to the targetcell
@@ -550,14 +528,11 @@ public class UnitMoveOrderSystem : ComponentSystem
                 if (IsAnEnemy(potentialCell))
                 {
                     listPosition.Add(potentialCell);
-                }
-                
+                }    
             }
             intermediaryCount++;
         }
-
         return listPosition;
-
     }
 
     //Return the maximum and minimum values of x and y cells
@@ -587,7 +562,6 @@ public class UnitMoveOrderSystem : ComponentSystem
     }
 
     //Return the list of range cells around a target (3 cells range)
-
     private List<Vector3Int> GetListOfRangeCells(List<Vector3Int> listEnemy)
     {
         List<Vector3Int> listPosition = new List<Vector3Int>();
@@ -623,7 +597,6 @@ public class UnitMoveOrderSystem : ComponentSystem
                 listPosition.Add(potentialCells[3]);
             }
         }
-
         return listPosition;
     }
 
@@ -633,7 +606,6 @@ public class UnitMoveOrderSystem : ComponentSystem
     }
 
     //Return the indice of the closest potiion from a list
-
     private int ClosestPosition(Vector3Int currentCellPosition, List<Vector3Int> potentialPositions)
     {
         int closestPositionIndice = new int();
@@ -645,13 +617,8 @@ public class UnitMoveOrderSystem : ComponentSystem
             {
                 closestPositionIndice = k;
                 min = Norme(currentCellPosition, potentialPositions[k]);
-
-
             }
         }
-
-
         return closestPositionIndice;
     }
-
 }

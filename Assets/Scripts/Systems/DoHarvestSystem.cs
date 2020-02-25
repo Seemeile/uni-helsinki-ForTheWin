@@ -16,10 +16,6 @@ public class DoHarvestSystem : ComponentSystem
             ref AnimationComponent animationComponent,
             ref UnitComponent unitComponent) => 
         {
-            if (SceneManager.GetActiveScene().name != "test")
-            {
-                return;
-            }
             Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
             switch(doHarvestComponent.state) 
             {

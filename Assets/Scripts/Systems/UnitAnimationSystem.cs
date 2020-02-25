@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
 using Unity.Rendering;
 
 public class UnitAnimationSystem : ComponentSystem
@@ -12,7 +10,8 @@ public class UnitAnimationSystem : ComponentSystem
     {
         EntityManager entityManager = World.Active.EntityManager;
 
-        Entities.ForEach((Entity entity, ref UnitComponent unitComponent, ref AnimationComponent animationComponent) => {
+        Entities.ForEach((Entity entity, ref UnitComponent unitComponent, ref AnimationComponent animationComponent) => 
+        {
             animationComponent.frameTimer += Time.deltaTime;
             while (animationComponent.frameTimer >= animationComponent.frameTimerMax)
             {
@@ -43,7 +42,7 @@ public class UnitAnimationSystem : ComponentSystem
     private void flipQuadUV(Mesh mesh) {
         var uvs = mesh.uv;
         if (uvs.Length != 4) {
-            Debug.Log("Error: not a four vertices mesh");
+            Debug.LogError("Error: not a four vertices mesh");
             return;
         }
         for (var i = 0; i < uvs.Length; i++) {

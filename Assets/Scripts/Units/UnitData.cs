@@ -8,8 +8,6 @@ using Unity.Transforms;
 
 public class UnitData
 {
-
-
     private static Dictionary<UnitType, string> unitSprites = new Dictionary<UnitType, string> {
         {UnitType.WIZARD, "wizzard_m_idle_anim_f0" },
         {UnitType.PEASANT, "skelet_idle_anim_f0" },
@@ -17,8 +15,6 @@ public class UnitData
         {UnitType.ELF, "elf_f_idle_anim_f0" },
         {UnitType.HEALTHBAR, "healthBarSprite"},
     };
-
-
 
     private static Dictionary<UnitType, string[]> idleAnimations = new Dictionary<UnitType, string[]> {
         {UnitType.WIZARD, new string[]{ "wizzard_m_idle_anim_f0", "wizzard_m_idle_anim_f1", "wizzard_m_idle_anim_f2", "wizzard_m_idle_anim_f3"} },
@@ -94,8 +90,19 @@ public class UnitData
     {
         return unitSprites[unitType];
     }
+
+    public static int[] getUnitCostsByName(string spriteName)
+    {
+        foreach (UnitType unitType in unitSprites.Keys)
+        {
+            if (getUnitSprite(unitType).Equals(spriteName)) {
+                return getUnitCosts(unitType);
+            }
+        }
+        return new int[0];
+    }
     
-    public static void spawnUnit(UnitType unitType, int gridPosX, int gridPosY)
+    private static Entity createUnitEntity(UnitType unitType, int gridPosX, int gridPosY)
     {
         EntityManager entityManager = World.Active.EntityManager;
 
@@ -108,7 +115,6 @@ public class UnitData
             typeof(TeamComponent),
             typeof(HealthComponent),
             typeof(FightComponent)
-        //typeof(IsWalkableComponent)
         );
 
         Material mat = new Material(Shader.Find("Unlit/Transparent"));
@@ -173,11 +179,6 @@ public class UnitData
             frameTimerMax = 0.3f
         });
 
-        // Set unit team
-        entityManager.SetComponentData(entity, new TeamComponent {
-            number = 0
-        });
-
         // Set unit health
         entityManager.SetComponentData(entity, new HealthComponent
         {
@@ -191,111 +192,27 @@ public class UnitData
             isFighting = false,
             hasToMove = false
         });
+
+        return entity;
+    }
+
+    public static void spawnUnit(UnitType unitType, int gridPosX, int gridPosY)
+    {
+        EntityManager entityManager = World.Active.EntityManager;
+        Entity entity = createUnitEntity(unitType, gridPosX, gridPosY);
+        entityManager.SetComponentData(entity, new TeamComponent {
+            number = 0
+        });
     }
 
 
     public static void spawnEnemyUnit(UnitType unitType, int gridPosX, int gridPosY)
     {
         EntityManager entityManager = World.Active.EntityManager;
-
-        EntityArchetype entityArchetype = entityManager.CreateArchetype(
-            typeof(Translation),
-            typeof(UnitComponent),
-            typeof(RenderMesh),
-            typeof(LocalToWorld),
-            typeof(AnimationComponent),
-            typeof(TeamComponent),
-            typeof(HealthComponent),
-            typeof(FightComponent)
-        //typeof(IsWalkableComponent)
-        );
-
-        Material mat = new Material(Shader.Find("Unlit/Transparent"));
-        Sprite tileSprite = Resources.Load<Sprite>("Sprites/Animation/" + getUnitSprite(unitType));
-        mat.mainTexture = tileSprite.texture;
-
-        float ratio = (float) tileSprite.texture.height / (float) tileSprite.texture.width;
-        int width = 1;
-        float height = 1 * ratio;
-        Mesh mesh = new Mesh();
-        // Setup vertices
-        Vector3[] newVertices = new Vector3[4];
-        newVertices[0] = new Vector3(0, 0, 0);
-        newVertices[1] = new Vector3(0, height, 0);
-        newVertices[2] = new Vector3(width, 0, 0);
-        newVertices[3] = new Vector3(width, height, 0);
-
-        // Setup UVs
-        Vector2[] newUVs = new Vector2[newVertices.Length];
-        newUVs[0] = new Vector2(0, 0);
-        newUVs[1] = new Vector2(0, 1);
-        newUVs[2] = new Vector2(1, 0);
-        newUVs[3] = new Vector2(1, 1);
-
-        // Setup triangles
-        int[] newTriangles = new int[] { 0, 1, 2, 3, 2, 1 };
-
-        // Setup normals
-        Vector3[] newNormals = new Vector3[newVertices.Length];
-        for (int i = 0; i < newNormals.Length; i++)
-        {
-            newNormals[i] = Vector3.forward;
-        }
-
-        // Create quad
-        mesh.vertices = newVertices;
-        mesh.uv = newUVs;
-        mesh.triangles = newTriangles;
-        mesh.normals = newNormals;
-
-        Entity entity = entityManager.CreateEntity(entityArchetype);
-
-        // Set unit translation
-        float3 spawnPos = new float3(gridPosX, gridPosY, -2);
-        entityManager.SetComponentData(entity, new Translation { Value = spawnPos });
-        entityManager.SetSharedComponentData(entity, new RenderMesh
-        {
-            mesh = mesh,
-            material = mat,
-        });
-
-        // Set unit component
-        entityManager.SetComponentData(entity, new UnitComponent
-        {
-            unitType = unitType
-        });
-
-        // Set animation
-        entityManager.SetComponentData(entity, new AnimationComponent
-        {
-            direction = UnitDirection.RIGHT,
-            animationType = UnitAnimation.IDLE,
-            currentFrame = 0,
-            frameCount = idleAnimations[unitType].Length,
-            frameTimer = 0f,
-            frameTimerMax = 0.3f
-        });
-
-        // Set unit team
-        entityManager.SetComponentData(entity, new TeamComponent
-        {
+        Entity entity = createUnitEntity(unitType, gridPosX, gridPosY);
+        entityManager.SetComponentData(entity, new TeamComponent {
             number = 1
         });
-
-        // Set unit health
-        entityManager.SetComponentData(entity, new HealthComponent
-        {
-            health = 100,
-            bar = false
-
-        });
-        //Set FightComponent
-        entityManager.SetComponentData(entity, new FightComponent
-        {
-            isFighting = false,
-            hasToMove =false
-        });
-
     }
 
 

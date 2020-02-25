@@ -12,7 +12,6 @@ public class CameraController : MonoBehaviour
     {
         pos = transform.position;
         handleKeyMovement();
-        //handleMouseMovement();
         transform.position = pos;
     }
 

@@ -6,5 +6,4 @@ using Unity.Entities;
 public struct HealthBarComponent : IComponentData
 {
     public Entity soldier;
-
 }

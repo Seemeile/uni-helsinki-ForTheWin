@@ -190,13 +190,11 @@ public class Pathfinding : ComponentSystem {
                 // Couldn't find a path!
             } else {
                 // Found a path
-                //Debug.Log(endNode.x + ", " + endNode.y + ": " + endNode.isWalkable);
                 pathPositionBuffer.Add(new PathPosition { position = pathfindingGridToTilemapGrid(new int2(endNode.x, endNode.y)) });
 
                 PathNode currentNode = endNode;
                 while (currentNode.cameFromNodeIndex != -1) {
                     PathNode cameFromNode = pathNodeArray[currentNode.cameFromNodeIndex];
-                    //Debug.Log(cameFromNode.x + ", " + cameFromNode.y + ": " + cameFromNode.isWalkable);
                     pathPositionBuffer.Add(new PathPosition { position = pathfindingGridToTilemapGrid(new int2(cameFromNode.x, cameFromNode.y)) } );
                     currentNode = cameFromNode;
                 }
@@ -245,15 +243,11 @@ public class Pathfinding : ComponentSystem {
         private struct PathNode {
             public int x;
             public int y;
-
             public int index;
-
             public int gCost;
             public int hCost;
             public int fCost;
-
             public bool isWalkable;
-
             public int cameFromNodeIndex;
 
             public void CalculateFCost() {

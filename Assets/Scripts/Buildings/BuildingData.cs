@@ -31,6 +31,13 @@ public class BuildingData
         return buildingCosts[buildingType];
     }
 
+    public static int[] getBuildingCostsByName(string spriteName)
+    {
+        int structureNumber = int.Parse(spriteName.Substring(spriteName.LastIndexOf('_') + 1));
+        BuildingType buildingType = getBuildingType(structureNumber);
+        return getBuildingCosts(buildingType);
+    }
+
     public static UnitType[] getBuildableUnits(BuildingType buildingType)
     {
         return buildableUnits[buildingType];

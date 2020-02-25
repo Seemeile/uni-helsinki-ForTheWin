@@ -5,10 +5,8 @@ using Unity.Mathematics;
 
 public class UnitSelectedRenderer : ComponentSystem
 {
-
     protected override void OnUpdate()
     {
-
         Entities.WithAll<EntitySelectedComponent>().ForEach((ref Translation translation) =>
         {
             float3 position = translation.Value + new float3(0.5f, 0, 0);
@@ -33,10 +31,7 @@ public class UnitSelectedRenderer : ComponentSystem
                     GameHandler.instance.enemyUnitCircleMaterial,
                       0
                       );
-            }
-
-            
+            }            
         });
     }
-
 }
