@@ -335,7 +335,7 @@ public class UnitMoveOrderSystem : ComponentSystem
     {
         bool isFree = true;
 
-        Entities.WithAny<BlockableEntityComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
+        Entities.WithAny<BlockableEntityComponent, UnitComponent>().WithNone<HealthBarComponent>().ForEach((Entity entity, ref Translation translation) =>
         {
             Vector3Int structurCell = GameHandler.instance.tilemap.WorldToCell(translation.Value);
             if (structurCell.x == cell.x && structurCell.y == cell.y)
