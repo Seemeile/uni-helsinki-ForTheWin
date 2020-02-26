@@ -22,13 +22,13 @@ public class FightSystem : ComponentSystem
                 fightComponent.hasToMove = true;
                 fightComponent.isFighting = true;
             }
-            if (ThereIsAnEnemy(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)))
+            if (ThereIsAnEnemy(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)) && !fightComponent.isMoving)
             {
                 fightComponent.isFighting = true;
                 fightComponent.target = EnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value));
 
             }
-            else if (ThereIsARangeEnemy(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)))
+            else if (ThereIsARangeEnemy(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value)) && !fightComponent.isMoving)
             {
                 fightComponent.isFighting = true;
                 fightComponent.target = RangeEnemyTarget(team.number, GameHandler.instance.tilemap.WorldToCell(translation.Value));

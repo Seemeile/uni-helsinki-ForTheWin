@@ -15,6 +15,7 @@ public class UnitMoveOrderSystem : ComponentSystem
     private Vector3Int currentMouseCell;
     private float3 lowerLeftPosition;
     private float3 upperRightPosition;
+    public static bool isMoving;
 
     protected override void OnUpdate()
     {
@@ -143,11 +144,12 @@ public class UnitMoveOrderSystem : ComponentSystem
             if (harvestableCell.x == currentMouseCell.x && harvestableCell.y == currentMouseCell.y)
             {
                 int entityCount = 0;
-                Entities.WithAll<EntitySelectedComponent>().ForEach((Entity unitEntity, ref UnitComponent unitComponent) =>
+                Entities.WithAll<EntitySelectedComponent>().ForEach((Entity unitEntity, ref UnitComponent unitComponent, ref FightComponent fightComponent) =>
                 {
                     //only go harvest if the unit is a peasant
                     if (UnitType.PEASANT == unitComponent.unitType && entityCount == 0)
                     {
+                        fightComponent.isMoving = true;
                         EntityManager.RemoveComponent<DoHarvestComponent>(unitEntity);
                         EntityManager.AddComponentData(unitEntity, new DoHarvestComponent {
                             target = harvestableEntity,
@@ -164,6 +166,7 @@ public class UnitMoveOrderSystem : ComponentSystem
         { /*do nothing*/ }
         else if (IsAnEnemy(targetCellPosition)) //If the target is an enemy
         {
+
             int nbrPositionAdj = 0;
             int nbrPositionAdjRange = 0;
             List<Vector3Int> positionListAround = GetListOfUnits(targetCellPosition); //the list of every enemy unit close to the target
@@ -201,8 +204,10 @@ public class UnitMoveOrderSystem : ComponentSystem
                 }
             }
 
-             Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref UnitComponent unitComponent) =>
+             Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref UnitComponent unitComponent, ref FightComponent fightComponent) =>
              {
+
+                 fightComponent.isMoving = false;
                  //If the unit is a close range fighter
                  if (unitComponent.unitType == UnitType.KNIGHT || unitComponent.unitType == UnitType.PEASANT)
                  {
@@ -249,13 +254,13 @@ public class UnitMoveOrderSystem : ComponentSystem
              });
         }
         else 
-        {
-            // the target in a free cell
+        {            // the target in a free cell
             List<Vector3Int> positionListAround = GetPositionListAround(targetCellPosition, armySize());
             int index = 0;
 
-            Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation) =>
+            Entities.WithAll<EntitySelectedComponent, UnitComponent>().ForEach((Entity entity, ref Translation translation, ref FightComponent fightComponent) =>
             {
+                fightComponent.isMoving = true;
                 Vector3Int currentCellPosition = GameHandler.instance.tilemap.WorldToCell(translation.Value);
                 finalTargetCellPosition = positionListAround[index];
 
