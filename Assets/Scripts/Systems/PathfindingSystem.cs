@@ -11,7 +11,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine.Tilemaps;
 
-public class Pathfinding : ComponentSystem {
+public class PathfindingSystem : ComponentSystem {
 
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
