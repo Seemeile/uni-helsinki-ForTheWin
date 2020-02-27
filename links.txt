@@ -1,4 +1,0 @@
-For the win links :
-
-GitHub Project : https://github.com/Seemeile/RTS-Project
-Asset folder : https://github.com/Seemeile/RTS-Project/tree/master/Assets
